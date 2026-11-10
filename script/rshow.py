@@ -12,7 +12,10 @@
 # the public, perform publicly and display publicly, and to permit others to do so.
 # ========================================================================================
 
-"""Interactive PHDF viewer for 2-D Matplotlib plots, with run comparison.
+"""Interactive PHDF viewer for 1-D/2-D Matplotlib plots, with run comparison.
+
+3-D dumps are shown as 2-D slices: pick the xy, xz or yz plane and move the
+slice through the domain with the slider (or type a position / step one cell).
 
 Run with
 
@@ -48,6 +51,7 @@ import matplotlib.colors as mcolors
 import numpy as np
 from cycler import cycler
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.collections import LineCollection
 from matplotlib.figure import Figure
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
@@ -76,9 +80,20 @@ COLORS = (
 
 RUN_LABELS = ("A", "B")
 
+# 3-D slicing: plane name -> (horizontal axis, vertical axis, normal axis),
+# with axes numbered 0=x, 1=y, 2=z.
+SLICE_PLANES = {"xy": (0, 1, 2), "xz": (0, 2, 1), "yz": (1, 2, 0)}
+AXIS_NAMES = ("x", "y", "z")
+
 # Resolution used when rendering movie frames (independent of savefig.dpi,
 # which is intentionally very high for publication figures).
 MOVIE_DPI = 200
+
+# Largest raster (pixels per side) built for one 2-D panel.
+MAX_RASTER_PIXELS = 8192
+
+# Number of sliced/selected block sets kept per dump (slider positions etc.).
+BLOCK_CACHE_SIZE = 8
 
 # A valid movie with real frames should be larger than this many bytes.
 MIN_VALID_MOVIE_BYTES = 1024
@@ -135,21 +150,95 @@ def configure_publication_style() -> None:
     configure_ffmpeg()
 
 
-def coordinate_edges(centers: np.ndarray) -> np.ndarray:
-    """Convert monotonic cell centers to edges, including nonuniform grids."""
-    centers = np.asarray(centers, dtype=float).squeeze()
-    if centers.ndim != 1 or centers.size == 0:
-        raise ValueError("Coordinates must be a nonempty 1-D array")
-    if centers.size == 1:
-        return np.array([centers[0] - 0.5, centers[0] + 0.5])
-    mids = 0.5 * (centers[:-1] + centers[1:])
-    return np.concatenate(
-        (
-            [centers[0] - (mids[0] - centers[0])],
-            mids,
-            [centers[-1] + (centers[-1] - mids[-1])],
-        )
-    )
+def block_edges(centers: np.ndarray) -> np.ndarray:
+    """Cell edges (block, cell + 1) from monotonic (block, cell) centers."""
+    c = np.asarray(centers, dtype=float)
+    if c.ndim == 1:
+        c = c[None, :]
+    if c.shape[1] == 1:
+        return np.concatenate((c - 0.5, c + 0.5), axis=1)
+    mids = 0.5 * (c[:, :-1] + c[:, 1:])
+    first = c[:, :1] - (mids[:, :1] - c[:, :1])
+    last = c[:, -1:] + (c[:, -1:] - mids[:, -1:])
+    return np.concatenate((first, mids, last), axis=1)
+
+
+def rasterize_blocks(
+    blocks: list[np.ndarray],
+    edges: list[tuple[np.ndarray, np.ndarray]],
+    xlim: tuple[float, float],
+    ylim: tuple[float, float],
+    max_shape: tuple[int, int],
+):
+    """Composite per-block 2-D arrays into one image covering the view.
+
+    Drawing one image is far cheaper than one QuadMesh per block, which is what
+    dominates plotting time for AMR meshes (and remote X11 sessions).
+
+    When the finest cells in view fit within ``max_shape`` the raster is aligned
+    to the finest cell grid, so every cell (at every AMR level) maps onto whole
+    pixels and the picture is exact. Otherwise the raster is capped at
+    ``max_shape`` (roughly screen resolution) and cells are sampled at pixel
+    centers; zooming in rebuilds the raster for the new view.
+
+    Returns ``(image, (x0, x1, y0, y1))`` or ``None`` if no block is in view.
+    Pixels not covered by any block are NaN (drawn transparent).
+    """
+    if not blocks:
+        return None
+    x0, x1 = sorted(float(v) for v in xlim)
+    y0, y1 = sorted(float(v) for v in ylim)
+    hlo = np.array([h[0] for h, _ in edges])
+    hhi = np.array([h[-1] for h, _ in edges])
+    vlo = np.array([v[0] for _, v in edges])
+    vhi = np.array([v[-1] for _, v in edges])
+    in_view = (hhi > x0) & (hlo < x1) & (vhi > y0) & (vlo < y1)
+    if not in_view.any():
+        return None
+    visible = np.flatnonzero(in_view)
+    x0, x1 = max(x0, hlo[visible].min()), min(x1, hhi[visible].max())
+    y0, y1 = max(y0, vlo[visible].min()), min(y1, vhi[visible].max())
+    if x1 <= x0 or y1 <= y0:
+        return None
+    dx = min((edges[b][0][-1] - edges[b][0][0]) / (len(edges[b][0]) - 1) for b in visible)
+    dy = min((edges[b][1][-1] - edges[b][1][0]) / (len(edges[b][1]) - 1) for b in visible)
+
+    def axis_grid(lo, hi, cell, origin, cap):
+        count = math.ceil((hi - lo) / cell - 1e-6)
+        if count <= cap:
+            # Snap to the finest cell grid so pixel centers are cell centers.
+            k0 = math.floor((lo - origin) / cell + 1e-6)
+            k1 = math.ceil((hi - origin) / cell - 1e-6)
+            lo, hi, count = origin + k0 * cell, origin + k1 * cell, max(k1 - k0, 1)
+        else:
+            count = cap
+        return lo, hi, lo + (np.arange(count) + 0.5) * ((hi - lo) / count)
+
+    x0, x1, xc = axis_grid(x0, x1, dx, hlo.min(), max_shape[0])
+    y0, y1, yc = axis_grid(y0, y1, dy, vlo.min(), max_shape[1])
+    image = np.full((yc.size, xc.size), np.nan)
+    for b in visible:
+        he, ve = edges[b]
+        i0, i1 = np.searchsorted(xc, (he[0], he[-1]))
+        j0, j1 = np.searchsorted(yc, (ve[0], ve[-1]))
+        if i0 >= i1 or j0 >= j1:
+            continue
+        ii = np.clip(np.searchsorted(he, xc[i0:i1], side="right") - 1, 0, he.size - 2)
+        jj = np.clip(np.searchsorted(ve, yc[j0:j1], side="right") - 1, 0, ve.size - 2)
+        image[j0:j1, i0:i1] = blocks[b][np.ix_(jj, ii)]
+    return image, (x0, x1, y0, y1)
+
+
+def dump_cache(dump) -> dict:
+    """Per-dump scratch cache; it is discarded together with the dump object."""
+    cache = getattr(dump, "_rshow_cache", None)
+    if cache is None:
+        cache = {}
+        try:
+            dump._rshow_cache = cache
+        except AttributeError:
+            pass
+    return cache
 
 
 def optional_float(text: str) -> float | None:
@@ -198,9 +287,26 @@ def plottable_variables(dump) -> list[str]:
 
 
 def dump_dimension(dump) -> int:
-    """Infer whether a mesh should be plotted as 1-D or 2-D."""
+    """Infer whether a mesh is 1-D, 2-D, or 3-D from cells per block."""
     y = np.asarray(dump.y)
-    return 1 if y.ndim < 2 or y.shape[-1] == 1 else 2
+    if y.ndim < 2 or y.shape[-1] == 1:
+        return 1
+    z = np.asarray(dump.z)
+    return 3 if z.ndim >= 2 and z.shape[-1] > 1 else 2
+
+
+def dump_coordinate(dump, axis: int) -> np.ndarray:
+    """Cell-center coordinates (block, cell) along axis 0=x, 1=y, 2=z."""
+    return np.asarray((dump.x, dump.y, dump.z)[axis])
+
+
+def dump_edges(dump, axis: int) -> np.ndarray:
+    """Cached cell-edge coordinates (block, cell + 1) along axis 0=x, 1=y, 2=z."""
+    cache = dump_cache(dump)
+    key = ("edges", axis)
+    if key not in cache:
+        cache[key] = block_edges(dump_coordinate(dump, axis))
+    return cache[key]
 
 
 def exception_details(exc: BaseException) -> str:
@@ -277,6 +383,22 @@ class PhdfPlotGui(tk.Tk):
         self.compare_var = tk.BooleanVar(value=False)
         self.sync_time_var = tk.BooleanVar(value=True)
         self.dump2_label_var = tk.StringVar(value="Run B: (none)")
+
+        # 3-D slice controls
+        self.slice_plane_var = tk.StringVar(value="xy")
+        self.slice_swap_var = tk.BooleanVar(value=False)
+        self.slice_pos_var = tk.DoubleVar(value=0.0)
+        self.slice_pos_text = tk.StringVar(value="")
+        self.slice_axis_label = tk.StringVar(value="Position")
+        self._slice_job = None
+        self._slice_dx = 0.0
+        self._slice_initialized = False
+
+        # Rendering: one image per 2-D panel instead of one mesh per block.
+        self.fast_render_var = tk.BooleanVar(value=True)
+        self._raster_panels: list[dict] = []
+        self._raster_job = None
+        self._raster_dpi: float | None = None  # higher-res rasters for save/export
 
         self._build_controls()
         self._build_figure()
@@ -393,9 +515,71 @@ class PhdfPlotGui(tk.Tk):
         row += 1
         self._entry_row(panel, row, "Selector indices", self.indices_var)
         row += 1
-        ttk.Label(panel, text="Example: component,z = 4,0", foreground="#666666").grid(
-            row=row, column=0, columnspan=2, sticky="w"
+        ttk.Label(
+            panel,
+            text="Example: component,z = 4,0 (2-D) or component (3-D)",
+            foreground="#666666",
+        ).grid(row=row, column=0, columnspan=2, sticky="w")
+        row += 1
+
+        # ---- 3-D slice --------------------------------------------------------
+        slicing = ttk.LabelFrame(panel, text="3-D slice", padding=4)
+        slicing.grid(row=row, column=0, columnspan=2, sticky="ew", pady=(6, 2))
+        slicing.columnconfigure(1, weight=1)
+        ttk.Label(slicing, text="Plane").grid(row=0, column=0, sticky="w")
+        self.slice_plane_combo = ttk.Combobox(
+            slicing,
+            textvariable=self.slice_plane_var,
+            values=tuple(SLICE_PLANES),
+            state="readonly",
+            width=6,
         )
+        self.slice_plane_combo.grid(row=0, column=1, sticky="w", padx=(5, 0))
+        self.slice_plane_combo.bind("<<ComboboxSelected>>", self._slice_plane_changed)
+        self.slice_swap_check = ttk.Checkbutton(
+            slicing,
+            text="Swap axes",
+            variable=self.slice_swap_var,
+            command=self._slice_swap_toggled,
+        )
+        self.slice_swap_check.grid(row=0, column=2, sticky="e")
+        self.slice_scale = ttk.Scale(
+            slicing,
+            orient=tk.HORIZONTAL,
+            variable=self.slice_pos_var,
+            from_=0.0,
+            to=1.0,
+            command=self._slice_scale_moved,
+        )
+        self.slice_scale.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(4, 2))
+        position = ttk.Frame(slicing)
+        position.grid(row=2, column=0, columnspan=3, sticky="ew")
+        position.columnconfigure(1, weight=1)
+        ttk.Label(position, textvariable=self.slice_axis_label).grid(
+            row=0, column=0, sticky="w"
+        )
+        self.slice_entry = ttk.Entry(
+            position, textvariable=self.slice_pos_text, width=12
+        )
+        self.slice_entry.grid(row=0, column=1, sticky="ew", padx=4)
+        self.slice_entry.bind("<Return>", self._slice_entry_set)
+        self.slice_prev_button = ttk.Button(
+            position, text="◀", width=2, command=lambda: self._slice_step(-1)
+        )
+        self.slice_prev_button.grid(row=0, column=2)
+        self.slice_next_button = ttk.Button(
+            position, text="▶", width=2, command=lambda: self._slice_step(1)
+        )
+        self.slice_next_button.grid(row=0, column=3)
+        self._slice_widgets = (
+            self.slice_plane_combo,
+            self.slice_swap_check,
+            self.slice_scale,
+            self.slice_entry,
+            self.slice_prev_button,
+            self.slice_next_button,
+        )
+        self._set_slice_controls_enabled(False)
         row += 1
 
         line_panels = ttk.LabelFrame(panel, text="Additional panels", padding=4)
@@ -481,6 +665,12 @@ class PhdfPlotGui(tk.Tk):
             checks,
             text="Lock color scale",
             variable=self.lock_colorscale_var,
+        ).pack(anchor="w")
+        ttk.Checkbutton(
+            checks,
+            text="Fast rendering (one image per panel)",
+            variable=self.fast_render_var,
+            command=self.plot,
         ).pack(anchor="w")
         row += 1
 
@@ -830,7 +1020,7 @@ class PhdfPlotGui(tk.Tk):
                 pass
             raise ValueError(
                 "Run B has a different dimensionality than run A; "
-                "both runs must be 1-D or both 2-D."
+                "both runs must be 1-D, 2-D, or 3-D."
             )
 
         old = self.dump2
@@ -863,6 +1053,7 @@ class PhdfPlotGui(tk.Tk):
 
             # Keep run B in step with run A (no-op if comparison is off).
             self._sync_comparison()
+            self._update_slice_range()
 
             variables = plottable_variables(self.dump)
             self.variable_combo["values"] = variables
@@ -953,7 +1144,7 @@ class PhdfPlotGui(tk.Tk):
 
         def update_shape(_event=None, reset_indices=True) -> None:
             try:
-                data = np.asarray(self.dump.Get(variable.get(), flatten=False))
+                data = self._field_source(self.dump, variable.get())
                 spatial_dimension = self._plot_dimension()
                 leading_shape = data.shape[1:-spatial_dimension]
                 shape_text.set(
@@ -966,7 +1157,7 @@ class PhdfPlotGui(tk.Tk):
 
         def accept() -> None:
             try:
-                data = np.asarray(self.dump.Get(variable.get(), flatten=False))
+                data = self._field_source(self.dump, variable.get())
                 selector_count = data.ndim - 1 - self._plot_dimension()
                 parse_indices(indices.get(), selector_count)
                 updated = {
@@ -1058,9 +1249,7 @@ class PhdfPlotGui(tk.Tk):
             return
         self.status_var.set(f"Loading {self.variable_var.get()}…")
         self.update_idletasks()
-        self.field_data = np.asarray(
-            self.dump.Get(self.variable_var.get(), flatten=False)
-        )
+        self.field_data = self._field_source(self.dump, self.variable_var.get())
         if self.field_data.ndim < 2:
             raise ValueError(
                 f"Expected at least (block,x), got shape {self.field_data.shape}"
@@ -1086,18 +1275,51 @@ class PhdfPlotGui(tk.Tk):
     def _selected_blocks(self) -> list[np.ndarray]:
         if self.field_data is None:
             self.load_variable()
-        assert self.field_data is not None
-        return self._blocks_from_field_data(self.field_data, self.indices_var.get())
+        return self._load_blocks(self.dump, self.variable_var.get(), self.indices_var.get())
+
+    def _field_source(self, dump, variable: str):
+        """Array-like (block, [components], z, y, x) data for ``variable``.
+
+        3-D cell-centered data is returned as the lazy HDF5 dataset so that only
+        the slice plane of the blocks it cuts is ever read from disk; everything
+        else goes through ``phdf.Get`` (which reads and caches the whole field).
+        """
+        if dump_dimension(dump) == 3 and not getattr(dump, "IncludesGhost", 0):
+            try:
+                dataset = dump.fid[variable]
+                topology = dataset.attrs.get("TopologicalLocation", "Cell")
+                if isinstance(topology, bytes):
+                    topology = topology.decode()
+                if str(topology) == "Cell" and len(dataset.shape) >= 4:
+                    return dataset
+            except (KeyError, TypeError, AttributeError):
+                pass
+        data = dump.Get(variable, flatten=False)
+        if data is None:
+            raise ValueError(f"Could not read '{variable}'")
+        return np.asarray(data)
 
     def _load_blocks(self, dump, variable: str, indices_text: str) -> list[np.ndarray]:
-        """Read ``variable`` from ``dump`` and return one spatial array per block."""
+        """Return one plottable array per block (cached per dump and slice)."""
+        key = (variable, indices_text.strip())
+        if dump_dimension(dump) == 3:
+            key += (
+                self.slice_plane_var.get(),
+                self.slice_swap_var.get(),
+                float(self.slice_pos_var.get()),
+            )
+        cache = dump_cache(dump).setdefault("blocks", {})
+        if key in cache:
+            return cache[key]
         try:
-            field_data = np.asarray(dump.Get(variable, flatten=False))
+            field_data = self._field_source(dump, variable)
         except Exception as exc:
-            raise ValueError(
-                f"Could not read '{variable}' from the comparison run: {exc}"
-            ) from exc
-        return self._blocks_from_field_data(field_data, indices_text)
+            raise ValueError(f"Could not read '{variable}': {exc}") from exc
+        blocks = self._blocks_from_field_data(field_data, indices_text, dump)
+        if len(cache) >= BLOCK_CACHE_SIZE:
+            cache.pop(next(iter(cache)))
+        cache[key] = blocks
+        return blocks
 
     def _selected_blocks_all_runs(self) -> list[np.ndarray]:
         """Primary-variable blocks from run A (and run B when comparing)."""
@@ -1109,13 +1331,33 @@ class PhdfPlotGui(tk.Tk):
         return blocks
 
     def _blocks_from_field_data(
-        self, field_data: np.ndarray, indices_text: str
+        self, field_data: np.ndarray, indices_text: str, dump
     ) -> list[np.ndarray]:
-        """Select component/slice indices and return one spatial array per block."""
+        """Select component indices and return one plottable array per block.
+
+        For 3-D dumps only the blocks cut by the current slice plane are
+        returned, each reduced to the 2-D cut (rows = vertical plot axis).
+        The order matches ``_plane_coords``.
+        """
         spatial_dimension = self._plot_dimension()
         selector_count = field_data.ndim - 1 - spatial_dimension
         indices = parse_indices(indices_text, selector_count)
         spatial_slices = (slice(None),) * spatial_dimension
+        if spatial_dimension == 3:
+            _, _, normal = SLICE_PLANES[self.slice_plane_var.get()]
+            blocks = []
+            for block, index in self._slice_selection(dump):
+                # Array axes are (z, y, x), so the normal axis n lives at 2 - n.
+                # Indexing the plane directly reads only that plane from HDF5.
+                plane = [slice(None)] * 3
+                plane[2 - normal] = int(index)
+                cut = np.asarray(field_data[(int(block),) + indices + tuple(plane)])
+                if cut.ndim != 2:
+                    raise ValueError(
+                        f"Selected data is not 3-D; resulting slice shape is {cut.shape}"
+                    )
+                blocks.append(cut.T if self.slice_swap_var.get() else cut)
+            return blocks
         blocks = []
         for block in range(field_data.shape[0]):
             array = np.asarray(field_data[(block,) + indices + spatial_slices])
@@ -1126,6 +1368,128 @@ class PhdfPlotGui(tk.Tk):
                 )
             blocks.append(array)
         return blocks
+
+    # ------------------------------------------------------------ 3-D slicing
+    def _plane_axes(self) -> tuple[int, int, int]:
+        """(horizontal, vertical, normal) axes; plain x/y/z for 1-D and 2-D."""
+        if self._plot_dimension() != 3:
+            return 0, 1, 2
+        horizontal, vertical, normal = SLICE_PLANES[self.slice_plane_var.get()]
+        if self.slice_swap_var.get():
+            horizontal, vertical = vertical, horizontal
+        return horizontal, vertical, normal
+
+    def _axis_labels(self) -> tuple[str, str]:
+        horizontal, vertical, _ = self._plane_axes()
+        return AXIS_NAMES[horizontal], AXIS_NAMES[vertical]
+
+    def _slice_selection(self, dump) -> list[tuple[int, int]]:
+        """(block, cell index along the normal) for every block the plane cuts.
+
+        Blocks are tested on half-open [lo, hi) extents so a plane on a block
+        boundary picks exactly one block per in-plane footprint (also with AMR).
+        """
+        _, _, normal = SLICE_PLANES[self.slice_plane_var.get()]
+        position = float(self.slice_pos_var.get())
+        edges = dump_edges(dump, normal)
+        inside = (edges[:, 0] <= position) & (position < edges[:, -1])
+        if not inside.any():
+            # Only reachable exactly on the domain's upper face.
+            inside = (edges[:, 0] <= position) & (position <= edges[:, -1])
+        selection = []
+        for block in np.flatnonzero(inside):
+            index = int(np.searchsorted(edges[block], position, side="right")) - 1
+            selection.append((int(block), min(max(index, 0), edges.shape[1] - 2)))
+        if not selection:
+            raise ValueError(
+                f"The {AXIS_NAMES[normal]} = {position:.6g} slice does not cut the mesh"
+            )
+        return selection
+
+    def _plane_coords(self, dump) -> list[tuple[np.ndarray, np.ndarray]]:
+        """(horizontal, vertical) cell edges per plotted block, in block order."""
+        horizontal, vertical, _ = self._plane_axes()
+        hedges = dump_edges(dump, horizontal)
+        vedges = dump_edges(dump, vertical)
+        if self._plot_dimension() != 3:
+            return list(zip(hedges, vedges))
+        return [(hedges[block], vedges[block]) for block, _ in self._slice_selection(dump)]
+
+    def _set_slice_controls_enabled(self, enabled: bool) -> None:
+        for widget in self._slice_widgets:
+            if widget is self.slice_plane_combo:
+                widget.configure(state="readonly" if enabled else "disabled")
+            else:
+                widget.state(["!disabled"] if enabled else ["disabled"])
+
+    def _update_slice_range(self, reset: bool = False) -> None:
+        """Fit the slider to the normal-axis extent of the current dump."""
+        if self.dump is None or self._plot_dimension() != 3:
+            self._set_slice_controls_enabled(False)
+            self.slice_axis_label.set("Position")
+            self.slice_pos_text.set("")
+            return
+        self._set_slice_controls_enabled(True)
+        _, _, normal = SLICE_PLANES[self.slice_plane_var.get()]
+        centers = dump_coordinate(self.dump, normal)
+        lo, hi = float(np.nanmin(centers)), float(np.nanmax(centers))
+        spacing = np.diff(centers, axis=1)
+        spacing = spacing[np.isfinite(spacing) & (spacing > 0)]
+        self._slice_dx = float(spacing.min()) if spacing.size else (hi - lo)
+        self.slice_scale.configure(from_=lo, to=hi)
+        position = float(self.slice_pos_var.get())
+        if reset or not self._slice_initialized or not lo <= position <= hi:
+            position = 0.5 * (lo + hi)
+            self._slice_initialized = True
+        self.slice_pos_var.set(position)
+        self.slice_axis_label.set(f"{AXIS_NAMES[normal]} =")
+        self.slice_pos_text.set(f"{position:.6g}")
+
+    def _slice_changed(self, refit_space: bool) -> None:
+        """Replot after the slice plane or position changed."""
+        self._slice_job = None
+        if self.dump is None or self._plot_dimension() != 3:
+            return
+        try:
+            if not self.lock_colorscale_var.get():
+                self._auto_color_range(redraw=False)
+            if refit_space:
+                self._auto_spatial_range(redraw=False)
+            self.plot()
+        except Exception as exc:
+            self._show_error("Could not update slice", exc)
+
+    def _slice_plane_changed(self, _event=None) -> None:
+        self.pause_playback()
+        self._update_slice_range(reset=True)
+        self._slice_changed(refit_space=True)
+
+    def _slice_swap_toggled(self) -> None:
+        self._slice_changed(refit_space=True)
+
+    def _slice_scale_moved(self, value: str) -> None:
+        """Track the slider continuously but debounce the (heavier) replot."""
+        self.slice_pos_text.set(f"{float(value):.6g}")
+        if self._slice_job is not None:
+            self.after_cancel(self._slice_job)
+        self._slice_job = self.after(120, lambda: self._slice_changed(False))
+
+    def _set_slice_position(self, position: float) -> None:
+        lo = float(self.slice_scale.cget("from"))
+        hi = float(self.slice_scale.cget("to"))
+        position = min(max(position, lo), hi)
+        self.slice_pos_var.set(position)
+        self.slice_pos_text.set(f"{position:.6g}")
+        self._slice_changed(refit_space=False)
+
+    def _slice_entry_set(self, _event=None) -> None:
+        try:
+            self._set_slice_position(float(self.slice_pos_text.get()))
+        except ValueError as exc:
+            self._show_error("Invalid slice position", exc)
+
+    def _slice_step(self, cells: int) -> None:
+        self._set_slice_position(float(self.slice_pos_var.get()) + cells * self._slice_dx)
 
     def _finite_range(
         self, blocks: list[np.ndarray], positive=False
@@ -1187,8 +1551,13 @@ class PhdfPlotGui(tk.Tk):
                 self.ymin_var.set(f"{lo - padding:.8g}")
                 self.ymax_var.set(f"{hi + padding:.8g}")
         else:
-            ymin = min(float(np.nanmin(d.y)) for d in dumps)
-            ymax = max(float(np.nanmax(d.y)) for d in dumps)
+            horizontal, vertical = self._plane_axes()[:2]
+            xmin = min(float(np.nanmin(dump_coordinate(d, horizontal))) for d in dumps)
+            xmax = max(float(np.nanmax(dump_coordinate(d, horizontal))) for d in dumps)
+            ymin = min(float(np.nanmin(dump_coordinate(d, vertical))) for d in dumps)
+            ymax = max(float(np.nanmax(dump_coordinate(d, vertical))) for d in dumps)
+            self.xmin_var.set(f"{xmin:.8g}")
+            self.xmax_var.set(f"{xmax:.8g}")
             self.ymin_var.set(f"{ymin:.8g}")
             self.ymax_var.set(f"{ymax:.8g}")
         if redraw:
@@ -1329,6 +1698,9 @@ class PhdfPlotGui(tk.Tk):
             axes.append(axes_object)
             panel_blocks = spec["blocks"]
             dump = spec["dump"]
+            # One Line2D per panel (blocks separated by NaN) instead of one per
+            # block: far fewer artists to build and draw.
+            xs, ys = [], []
             for block, data in enumerate(panel_blocks):
                 x = np.asarray(dump.x[block, :])
                 if data.shape != x.shape:
@@ -1336,22 +1708,26 @@ class PhdfPlotGui(tk.Tk):
                         f"{spec['variable']}, block {block}: data shape {data.shape} "
                         f"does not match x-coordinate shape {x.shape}"
                     )
-                (data_line,) = axes_object.plot(
-                    x,
-                    data,
-                    color=COLORS[spec["run"] % len(COLORS)],
-                    linewidth=max(1.4, 1.4 * line_width),
+                xs += [x, [np.nan]]
+                ys += [np.asarray(data, dtype=float), [np.nan]]
+            (data_line,) = axes_object.plot(
+                np.concatenate(xs),
+                np.concatenate(ys),
+                color=COLORS[spec["run"] % len(COLORS)],
+                linewidth=max(1.4, 1.4 * line_width),
+            )
+            self.data_lines.append(data_line)
+            if self.mesh_var.get():
+                xedges = dump_edges(dump, 0)
+                mesh_line = axes_object.vlines(
+                    np.unique(np.concatenate((xedges[:, 0], xedges[:, -1]))),
+                    0.0,
+                    1.0,
+                    transform=axes_object.get_xaxis_transform(),
+                    color="black",
+                    linewidth=max(0.45, 0.45 * line_width),
                 )
-                self.data_lines.append(data_line)
-                if self.mesh_var.get():
-                    xedges = coordinate_edges(x)
-                    for edge in (xedges[0], xedges[-1]):
-                        mesh_line = axes_object.axvline(
-                            edge,
-                            color="black",
-                            linewidth=max(0.45, 0.45 * line_width),
-                        )
-                        self.mesh_lines.append(mesh_line)
+                self.mesh_lines.append(mesh_line)
 
             axes_object.set_ylabel(spec["variable"])
             axes_object.set_yscale("log" if positive else "linear")
@@ -1449,10 +1825,31 @@ class PhdfPlotGui(tk.Tk):
             hspace=0.16,
             wspace=0.40,
         )
+        fast = self.fast_render_var.get()
+        # Cell edges per run (all panels of one run share the same blocks).
+        plane_edges = {}
+        for spec in specs:
+            if spec["run"] not in plane_edges:
+                plane_edges[spec["run"]] = self._plane_coords(spec["dump"])
+        all_edges = [pair for pairs in plane_edges.values() for pair in pairs]
+        view = []
+        for entry, pick, which in (
+            (self.xmin_var, min, (0, 0)),
+            (self.xmax_var, max, (0, -1)),
+            (self.ymin_var, min, (1, 0)),
+            (self.ymax_var, max, (1, -1)),
+        ):
+            value = optional_float(entry.get())
+            if value is None:
+                value = pick(float(pair[which[0]][which[1]]) for pair in all_edges)
+            view.append(value)
+        xlim, ylim = (view[0], view[1]), (view[2], view[3])
+
         axes = []
         self.mesh_lines = []
         self.data_lines = []
         self.colorbars = []
+        self._raster_panels = []
         for panel_index, spec in enumerate(specs):
             row, column = divmod(panel_index, columns)
             axes_object = self.figure.add_subplot(
@@ -1477,35 +1874,49 @@ class PhdfPlotGui(tk.Tk):
             norm, _, _ = self._color_norm(
                 spec["group_blocks"], positive, requested_vmin, requested_vmax
             )
-            pcol = None
-            for block, data in enumerate(panel_blocks):
-                xedges = coordinate_edges(dump.x[block, :])
-                yedges = coordinate_edges(dump.y[block, :])
+            edges = plane_edges[spec["run"]]
+            for block, (data, (xedges, yedges)) in enumerate(zip(panel_blocks, edges)):
                 expected_shape = (len(yedges) - 1, len(xedges) - 1)
                 if data.shape != expected_shape:
                     raise ValueError(
                         f"{spec['variable']}, block {block}: data shape {data.shape} "
                         f"does not match coordinate shape {expected_shape}"
                     )
-                pcol = axes_object.pcolormesh(
-                    xedges,
-                    yedges,
-                    data,
-                    norm=norm,
-                    cmap=self.cmap_var.get(),
-                    shading="flat",
-                    rasterized=True,
-                )
-                if self.mesh_var.get():
-                    (mesh_line,) = axes_object.plot(
-                        [xedges[0], xedges[-1], xedges[-1], xedges[0], xedges[0]],
-                        [yedges[0], yedges[0], yedges[-1], yedges[-1], yedges[0]],
-                        color="black",
-                        linewidth=max(0.45, 0.45 * line_width),
+            if fast:
+                pcol = self._draw_raster(axes_object, panel_blocks, edges, norm, xlim, ylim)
+            else:
+                pcol = None
+                for data, (xedges, yedges) in zip(panel_blocks, edges):
+                    pcol = axes_object.pcolormesh(
+                        xedges,
+                        yedges,
+                        data,
+                        norm=norm,
+                        cmap=self.cmap_var.get(),
+                        shading="flat",
+                        rasterized=True,
                     )
-                    self.mesh_lines.append(mesh_line)
+            if self.mesh_var.get() and edges:
+                # All block outlines as a single collection.
+                h0 = np.array([e[0][0] for e in edges])
+                h1 = np.array([e[0][-1] for e in edges])
+                v0 = np.array([e[1][0] for e in edges])
+                v1 = np.array([e[1][-1] for e in edges])
+                outlines = np.stack(
+                    (
+                        np.stack((h0, h1, h1, h0, h0), axis=1),
+                        np.stack((v0, v0, v1, v1, v0), axis=1),
+                    ),
+                    axis=2,
+                )
+                mesh_line = LineCollection(
+                    outlines, colors="black", linewidths=max(0.45, 0.45 * line_width)
+                )
+                axes_object.add_collection(mesh_line, autolim=False)
+                self.mesh_lines.append(mesh_line)
 
-            assert pcol is not None
+            if pcol is None:
+                pcol = mpl.cm.ScalarMappable(norm=norm, cmap=self.cmap_var.get())
             divider = make_axes_locatable(axes_object)
             colorbar_axes = divider.append_axes("right", size="4%", pad="3%")
             colorbar = self.figure.colorbar(pcol, cax=colorbar_axes)
@@ -1514,7 +1925,7 @@ class PhdfPlotGui(tk.Tk):
             if comparing:
                 axes_object.set_title(spec["tag"])
             if column == 0:
-                axes_object.set_ylabel("y")
+                axes_object.set_ylabel(self._axis_labels()[1])
             else:
                 axes_object.tick_params(labelleft=False)
             axes_object.set_aspect("equal" if self.equal_aspect_var.get() else "auto")
@@ -1524,18 +1935,16 @@ class PhdfPlotGui(tk.Tk):
         self.colorbar = self.colorbars[0]
         self.line_panel_axes = axes
         self.main_axes = axes[0]
-        xmin = optional_float(self.xmin_var.get())
-        xmax = optional_float(self.xmax_var.get())
-        ymin = optional_float(self.ymin_var.get())
-        ymax = optional_float(self.ymax_var.get())
-        if xmin is not None or xmax is not None:
-            axes[0].set_xlim(left=xmin, right=xmax)
-        if ymin is not None or ymax is not None:
-            axes[0].set_ylim(bottom=ymin, top=ymax)
+        axes[0].set_xlim(*xlim)
+        axes[0].set_ylim(*ylim)
+        if fast:
+            # Rebuild the rasters for the new view after toolbar zoom/pan.
+            axes[0].callbacks.connect("xlim_changed", self._view_changed)
+            axes[0].callbacks.connect("ylim_changed", self._view_changed)
         for panel_index, axes_object in enumerate(axes):
             row, _ = divmod(panel_index, columns)
             if row == rows - 1:
-                axes_object.set_xlabel("x")
+                axes_object.set_xlabel(self._axis_labels()[0])
         self.figure_title = self.figure.suptitle(title, y=0.985)
         self._apply_plot_style(draw=False)
         self.canvas.draw_idle()
@@ -1543,6 +1952,62 @@ class PhdfPlotGui(tk.Tk):
             f"{len(specs)} 2-D panel{'s' if len(specs) != 1 else ''}  |  "
             f"{self._status_names()}"
         )
+
+    def _raster_shape(self, axes_object) -> tuple[int, int]:
+        """Raster size cap: the panel's size in output pixels."""
+        bbox = axes_object.get_window_extent()
+        scale = (self._raster_dpi or self.figure.dpi) / self.figure.dpi
+        return (
+            int(np.clip(bbox.width * scale + 1, 16, MAX_RASTER_PIXELS)),
+            int(np.clip(bbox.height * scale + 1, 16, MAX_RASTER_PIXELS)),
+        )
+
+    def _draw_raster(self, axes_object, blocks, edges, norm, xlim, ylim):
+        result = rasterize_blocks(blocks, edges, xlim, ylim, self._raster_shape(axes_object))
+        if result is None:
+            image_data, extent = np.full((1, 1), np.nan), (*xlim, *ylim)
+        else:
+            image_data, extent = result
+        image = axes_object.imshow(
+            image_data,
+            extent=extent,
+            origin="lower",
+            interpolation="nearest",
+            norm=norm,
+            cmap=self.cmap_var.get(),
+            aspect="auto",
+        )
+        image.set_visible(result is not None)
+        self._raster_panels.append(
+            {"axes": axes_object, "image": image, "blocks": blocks, "edges": edges}
+        )
+        return image
+
+    def _view_changed(self, _axes=None) -> None:
+        if self._raster_job is not None:
+            self.after_cancel(self._raster_job)
+        self._raster_job = self.after(150, self._rerender_rasters)
+
+    def _rerender_rasters(self, draw: bool = True) -> None:
+        """Rebuild each panel's raster for its current view limits."""
+        self._raster_job = None
+        for panel in self._raster_panels:
+            axes_object = panel["axes"]
+            if axes_object not in self.figure.axes:
+                continue
+            result = rasterize_blocks(
+                panel["blocks"],
+                panel["edges"],
+                axes_object.get_xlim(),
+                axes_object.get_ylim(),
+                self._raster_shape(axes_object),
+            )
+            panel["image"].set_visible(result is not None)
+            if result is not None:
+                panel["image"].set_data(result[0])
+                panel["image"].set_extent(result[1])
+        if draw:
+            self.canvas.draw_idle()
 
     def _status_names(self) -> str:
         if self._comparison_active():
@@ -1578,6 +2043,13 @@ class PhdfPlotGui(tk.Tk):
             self.figure.clear()
             self.figure_title = None
             title = self._make_title()
+            if self._plot_dimension() == 3:
+                plane = self.slice_plane_var.get()
+                normal = AXIS_NAMES[SLICE_PLANES[plane][2]]
+                title += (
+                    f"\n{plane} slice at {normal} = "
+                    f"{float(self.slice_pos_var.get()):.4g}"
+                )
             if is_1d:
                 self._plot_1d_panels(blocks, positive, line_width, title)
             else:
@@ -1618,10 +2090,19 @@ class PhdfPlotGui(tk.Tk):
             self.export_movie(filename)
             return
         try:
+            if self._raster_panels:
+                # Rebuild the rasters at the output resolution for this save.
+                dpi = mpl.rcParams["savefig.dpi"]
+                self._raster_dpi = self.figure.dpi if dpi == "figure" else float(dpi)
+                self._rerender_rasters(draw=False)
             self.figure.savefig(filename)
             self.status_var.set(f"Saved {filename}")
         except Exception as exc:
             self._show_error("Could not save figure", exc)
+        finally:
+            if self._raster_dpi is not None:
+                self._raster_dpi = None
+                self._rerender_rasters()
 
     def export_movie(self, filename: str | None = None) -> None:
         """Render all run-A dumps (with matching run-B dumps) to MP4 or GIF."""
@@ -1686,6 +2167,7 @@ class PhdfPlotGui(tk.Tk):
         self.resizable(False, False)  # keep the frame size constant
         self.update_idletasks()
         self.exporting = True
+        self._raster_dpi = MOVIE_DPI
         movie_saved = False
         export_failed = False
 
@@ -1756,6 +2238,7 @@ class PhdfPlotGui(tk.Tk):
             self._show_error("Could not export movie", exc)
         finally:
             self.exporting = False
+            self._raster_dpi = None
             self.resizable(*was_resizable)
             try:
                 self.figure.set_size_inches(*original_size, forward=False)

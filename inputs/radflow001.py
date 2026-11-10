@@ -22,6 +22,25 @@ Radiation transport is selectable:
 Mesh refinement follows the bubble choice:
     production_bubbles = True   -> adaptive refinement
     production_bubbles = False  -> static refinement
+
+Geometry is selectable:
+    geometry = "rz"   -> 2-D cylindrical (R, Z)     x1 = R >= 0, x2 = axial
+    geometry = "xyz"  -> 3-D Cartesian  (x, y, z)   y = axial, column centered on x = z = 0
+
+    IMPORTANT -- the coordinate system is a COMPILE-TIME choice in riot
+    (PARTHENON_COORDINATES). Run the deck with a binary that matches `geometry`:
+        geometry = "rz"   ->  PARTHENON_COORDINATES=UniformCylindrical
+        geometry = "xyz"  ->  PARTHENON_COORDINATES=UniformCartesian
+
+    The axial direction is mesh x2 in both cases, so the drive is always on the
+    inner_x2 face, and the z = 0 slice of a 3-D run lines up with the 2-D R-y plane.
+
+    Coordinates seen by the python callbacks:
+      region masks (region_pgen converts to Cartesian):
+          rz : pos = (R, 0, Z)        xyz : pos = (x, y, z)
+      radiation BCs (raw mesh coordinates, no conversion):
+          rz : pos = (R, Z, phi)      xyz : pos = (x, y, z)
+    The column_coords()/bc_column_coords() helpers below hide this difference.
 """
 
 from itertools import count
@@ -36,6 +55,7 @@ from random_spherical_regions import generate_regions_in_cylinder
 # ============================================================================
 # 1. USER TOGGLES
 # ============================================================================
+geometry = "rz"                  # "rz" (2-D cylindrical) or "xyz" (3-D Cartesian)
 transport = "sn"                 # "sn" or "diffusion"
 production_bubbles = True       # True: real V-coated microballoons + adaptive mesh
                                  # False: larger comparable-shell bubbles + static mesh
@@ -81,6 +101,9 @@ scattering_model = {
 scattering_kappa = {
 }           
 
+if geometry not in ("rz", "xyz"):
+    raise ValueError(f"geometry must be 'rz' or 'xyz', got '{geometry}'")
+is_3d = (geometry == "xyz")
 if transport not in ("sn", "diffusion"):
     raise ValueError(f"transport must be 'sn' or 'diffusion', got '{transport}'")
 if foam_air_opacity_source not in ("scsio2", "air"):
@@ -92,12 +115,29 @@ if foam_air_opacity_source not in ("scsio2", "air"):
 # ============================================================================
 # 2. NUMERICS AND MESH SETTINGS
 # ============================================================================
-nx1, nx2, nx3 = 128, 256, 1
-nx1block, nx2block, nx3block = 16, 16, 1
-
-x0, x1 = 0.0, 0.085
+# Radial extent of the domain and axial extent of the column (cm)
+r_max = 0.085
 y0, y1 = -0.085, 0.085
-z0, z1 = 0.0, 2 * np.pi
+
+nr = 128                 # cells across 0 <= r <= r_max (sets the base cell size)
+ny = 256                 # cells along the axis, y0 <= y <= y1
+nblock = 16              # meshblock size in each active direction
+
+if is_3d:
+    # Column axis along y, centered on x = z = 0. Same base cell size as 2-D, so the
+    # transverse directions get 2*nr cells across [-r_max, r_max].
+    # NOTE: this is (2*nr)^2 * ny cells on the base level before AMR -- reduce nr/ny
+    # or numlev for 3-D runs that need to fit in memory.
+    nx1, nx2, nx3 = 2 * nr, ny, 2 * nr
+    nx1block, nx2block, nx3block = nblock, nblock, nblock
+    x0, x1 = -r_max, r_max
+    z0, z1 = -r_max, r_max
+else:
+    # 2-D RZ: x1 = R, x2 = axial, x3 = azimuth (single zone)
+    nx1, nx2, nx3 = nr, ny, 1
+    nx1block, nx2block, nx3block = nblock, nblock, 1
+    x0, x1 = 0.0, r_max
+    z0, z1 = 0.0, 2 * np.pi
 
 numlev = 7
 refinement = "adaptive" if production_bubbles else "static"
@@ -276,6 +316,8 @@ def bubble_count():
 
 
 n_bubbles = bubble_count()
+# Bubbles are generated in a cylinder whose axis is the helper's 3rd coordinate; see
+# bubble_pos() for how region-mask positions are mapped into that frame.
 print(f"[bubbles] production={production_bubbles}: {n_bubbles} bubbles in 3-D")
 
 bubble_regions = generate_regions_in_cylinder(
@@ -300,7 +342,7 @@ OPAC_FILE = "materials-opac-ngroups1.sp5"
 
 def setup_run_and_output():
     riot.input("riot", problem="region_pgen", verbose=False)
-    riot.input("parthenon/job", problem_id="output/radflow")
+    riot.input("parthenon/job", problem_id="output/radflow" + ("_3d" if is_3d else ""))
 
     # Variables common to both transport modes
     variables = [
@@ -330,11 +372,19 @@ def setup_run_and_output():
 
 
 def setup_mesh():
+    if is_3d:
+        # Full column in x/z: all lateral faces are physical outer faces
+        bc1 = dict(ix1_bc="outflow", ox1_bc="outflow")
+        bc3 = dict(ix3_bc="outflow", ox3_bc="outflow")
+    else:
+        # RZ: axis (R = 0) is reflecting, azimuth is a single periodic zone
+        bc1 = dict(ix1_bc="reflecting", ox1_bc="outflow")
+        bc3 = dict(ix3_bc="periodic", ox3_bc="periodic")
     mesh_kwargs = dict(
         nghost=4, refinement=refinement, numlevel=numlev,
-        nx1=nx1, x1min=x0, x1max=x1, ix1_bc="reflecting", ox1_bc="outflow",
+        nx1=nx1, x1min=x0, x1max=x1, **bc1,
         nx2=nx2, x2min=y0, x2max=y1, ix2_bc="outflow", ox2_bc="outflow",
-        nx3=nx3, x3min=z0, x3max=z1, ix3_bc="periodic", ox3_bc="periodic",
+        nx3=nx3, x3min=z0, x3max=z1, **bc3,
     )
     if use_multigrid:
         mesh_kwargs["multigrid"] = True   # allocate storage for the multigrid solvers
@@ -427,9 +477,19 @@ def setup_regions():
     """Initial-condition regions. Later regions override earlier ones."""
     ids = count()
 
+    def axis_ends(a0, a1):
+        """Cylinder axis endpoints in the Cartesian frame the region masks use.
+
+        rz : masks see (R, 0, Z), so the axis is Cartesian z.
+        xyz: the column axis is y.
+        """
+        if is_3d:
+            return dict(x0=0.0, y0=a0, z0=0.0, x1=0.0, y1=a1, z1=0.0)
+        return dict(x0=0.0, y0=0.0, z0=a0, x1=0.0, y1=0.0, z1=a1)
+
     def cyl(name, matid, radius, a0, a1):
         riot.input(f"region{next(ids)}", name=name, mask_type="inside_cylinder", matid=matid,
-                   x0=0.0, y0=0.0, z0=a0, x1=0.0, y1=0.0, z1=a1,
+                   **axis_ends(a0, a1),
                    radius=radius, c_m_pressure=P0, c_m_temperature=T0)
 
     def cyl_mixture(name, matids, vfracs, radius, a0, a1):
@@ -437,7 +497,7 @@ def setup_regions():
         m1, m2 = matids
         riot.input(
             f"region{next(ids)}", name=name, mask_type="inside_cylinder",
-            x0=0.0, y0=0.0, z0=a0, x1=0.0, y1=0.0, z1=a1,
+            **axis_ends(a0, a1),
             radius=radius, matid=matids,
             **{
                 f"c_c_mat_volume_fraction_{m1}": vfracs[0],
@@ -512,12 +572,12 @@ def setup_physics_diffusion():
                a_radiation=7.5657e-15,
                c_light=2.998e10,
                boundary_condition=[
-                   "zero_flux",  # inner_x1 (r=0)
+                   "zero_flux",  # inner_x1 (rz: r=0 axis | xyz: x = -r_max)
                    "zero_flux",  # outer_x1
                    "python",     # inner_x2 (drive face): radiation enters only into foam
                    "zero_flux",  # outer_x2
-                   "zero_flux",  # inner_x3 (periodic, unused)
-                   "zero_flux",  # outer_x3 (periodic, unused)
+                   "zero_flux",  # inner_x3 (rz: periodic, unused | xyz: z = -r_max)
+                   "zero_flux",  # outer_x3
                ],
                boundary_T=[T0] * 6,   # unused due to python boundary conditions
                timestep_temperature_scale=opac_temp_min,
@@ -567,8 +627,12 @@ def setup_physics_sn():
 
 
 def make_input():
-    print(f"[config] transport={transport}, production_bubbles={production_bubbles}, "
+    print(f"[config] geometry={geometry}, transport={transport}, "
+          f"production_bubbles={production_bubbles}, "
           f"refinement={refinement}, multigrid={use_multigrid}")
+    print(f"[config] base mesh {nx1} x {nx2} x {nx3} = {nx1 * nx2 * nx3:,} cells, "
+          f"numlevel={numlev}  (binary must use PARTHENON_COORDINATES="
+          f"{'UniformCartesian' if is_3d else 'UniformCylindrical'})")
     setup_run_and_output()
     setup_mesh()
     setup_materials()
@@ -582,11 +646,34 @@ def make_input():
 # ============================================================================
 # 8. PYTHON REGION AND BOUNDARY CLASSES (looked up by name from the input file)
 # ============================================================================
+def column_coords(pos):
+    """(r, axial) from region-mask positions (Cartesian, see module docstring)."""
+    if is_3d:
+        return np.hypot(pos[:, 0], pos[:, 2]), pos[:, 1]
+    return np.hypot(pos[:, 0], pos[:, 1]), pos[:, 2]
+
+
+def bc_column_coords(pos):
+    """(r, axial) from radiation-BC positions (raw mesh coordinates)."""
+    if is_3d:
+        return np.hypot(pos[:, 0], pos[:, 2]), pos[:, 1]
+    return pos[:, 0], pos[:, 1]
+
+
+def bubble_pos(pos):
+    """Map region-mask positions into the bubble generator's frame (axis = 3rd coord).
+
+    rz : (R, 0, Z) already has the axis last.
+    xyz: the column axis is y, so reorder (x, y, z) -> (x, z, y).
+    """
+    if is_3d:
+        return np.ascontiguousarray(pos[:, [0, 2, 1]])
+    return pos
+
+
 class al_fillet:
     def mask(self, pos):
-        # Cylinder axis is z; radius is sqrt(x^2 + y^2)
-        r = np.sqrt(pos[:, 0] ** 2 + pos[:, 1] ** 2)
-        y = pos[:, 2]
+        r, y = column_coords(pos)
 
         in_r = (r >= casing_radius) & (r <= fillet_rc)
         collar = in_r & (y >= y0) & (y <= fillet_y_start)
@@ -598,17 +685,17 @@ class al_fillet:
 
 class v_shells:
     def mask(self, pos):
-        return bubble_regions.classify_outer_shell_points(pos)
+        return bubble_regions.classify_outer_shell_points(bubble_pos(pos))
 
 
 class glass_shells:
     def mask(self, pos):
-        return bubble_regions.classify_inner_shell_points(pos)
+        return bubble_regions.classify_inner_shell_points(bubble_pos(pos))
 
 
 class voids:
     def mask(self, pos):
-        return bubble_regions.classify_center_points(pos)
+        return bubble_regions.classify_center_points(bubble_pos(pos))
 
 
 class rad_bc:
@@ -616,8 +703,8 @@ class rad_bc:
 
     def rad_temperature(self, t, face, pos, T):
         if face == "inner_x2":
-            # Radial (x1) ghost-cell coordinate: self.x if provided, else column 0
-            r = pos[:, getattr(self, "x", 0)]
+            # Distance of each ghost cell from the column axis
+            r, _ = bc_column_coords(pos)
             # Smooth transition from Tdrive (inside foam) to T0 (liner/casing/air)
             tanh_steepness = 100
             f = 0.5 + 0.5 * np.tanh((r / foam_radius - 1.0) * tanh_steepness)
@@ -652,7 +739,7 @@ def plot_drive(fname="output/drive_profile.png"):
 
     # (2) Radial profile at the drive face
     ax = axs[1]
-    r = np.linspace(0.0, x1, 1000)
+    r = np.linspace(0.0, r_max, 1000)
     pos = np.zeros((r.size, 3))
     pos[:, 0] = r
     bc = rad_bc()
