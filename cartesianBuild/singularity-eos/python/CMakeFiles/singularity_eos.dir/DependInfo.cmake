@@ -1,0 +1,26 @@
+
+# Consider dependencies only in project.
+set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
+
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  )
+
+# The set of dependency files which are needed:
+set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/vast/home/ssolod/riot/external/singularity-eos/python/modifier_bilinear_ramp.cpp" "singularity-eos/python/CMakeFiles/singularity_eos.dir/modifier_bilinear_ramp.cpp.o" "gcc" "singularity-eos/python/CMakeFiles/singularity_eos.dir/modifier_bilinear_ramp.cpp.o.d"
+  "/vast/home/ssolod/riot/external/singularity-eos/python/modifier_scaled.cpp" "singularity-eos/python/CMakeFiles/singularity_eos.dir/modifier_scaled.cpp.o" "gcc" "singularity-eos/python/CMakeFiles/singularity_eos.dir/modifier_scaled.cpp.o.d"
+  "/vast/home/ssolod/riot/external/singularity-eos/python/modifier_shifted.cpp" "singularity-eos/python/CMakeFiles/singularity_eos.dir/modifier_shifted.cpp.o" "gcc" "singularity-eos/python/CMakeFiles/singularity_eos.dir/modifier_shifted.cpp.o.d"
+  "/vast/home/ssolod/riot/external/singularity-eos/python/module.cpp" "singularity-eos/python/CMakeFiles/singularity_eos.dir/module.cpp.o" "gcc" "singularity-eos/python/CMakeFiles/singularity_eos.dir/module.cpp.o.d"
+  )
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
+  )
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_FORWARD_LINKED_INFO_FILES
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

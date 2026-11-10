@@ -37,7 +37,7 @@ if [ "$(printf '%s\n' "10.4.0" "$CXX_VERSION" | sort -V | head -n1)" != "10.4.0"
   exit 1
 fi
 
-BUILD_DIR="$PWD/build"
+BUILD_DIR="$PWD/cartesianBuild"
 
 # CMake caches the compiler; remove a stale cache that picked GCC 8.5
 if [ -f "$BUILD_DIR/CMakeCache.txt" ] && \
@@ -61,7 +61,7 @@ cmake -S . -B "$BUILD_DIR" \
   -DPython_EXECUTABLE="$VIEW/bin/python3" \
   -DPython_FIND_STRATEGY=LOCATION \
   -DCMAKE_INSTALL_PREFIX="$VIEW" \
-  -DPARTHENON_COORDINATES=UniformCylindrical \
+  -DPARTHENON_COORDINATES=UniformCartesian \
   -DRIOT_ENABLE_HDF5=ON \
   -DRIOT_ENABLE_MPI=ON \
   -DRIOT_BUILD_SINGULARITY=ON \

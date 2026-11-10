@@ -1,0 +1,1 @@
+include(/vast/home/ssolod/riot/cartesianBuild/parthenon/Kokkos/KokkosTargets.cmake)

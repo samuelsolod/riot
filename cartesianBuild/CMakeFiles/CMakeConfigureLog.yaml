@@ -1,0 +1,1368 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineSystem.cmake:205 (message)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      The system is: Linux - 4.18.0-553.162.1.el8_10.x86_64 - x86_64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+      
+      The C compiler identification is GNU, found in:
+        /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/3.31.12/CompilerIdC/a.out
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is GNU, found in:
+        /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/3.31.12/CompilerIdCXX/a.out
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:74 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-dqkZsp"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-dqkZsp"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-dqkZsp'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_42d43/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_42d43.dir/build.make CMakeFiles/cmTC_42d43.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-dqkZsp'
+        Building C object CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc   -v -o CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o -c /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCCompilerABI.c
+        mpicc for MPICH version 5.0.2
+        Using built-in specs.
+        COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/gcc
+        Target: x86_64-pc-linux-gnu
+        Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c,c++,fortran,lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 13.2.0 (GCC) 
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_42d43.dir/'
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/cc1 -quiet -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include -iprefix /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/ /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_42d43.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccO75iA5.s
+        GNU C17 (GCC) version 13.2.0 (x86_64-pc-linux-gnu)
+        	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-20), GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.24-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"
+        ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include"
+        ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed"
+        ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed
+         /usr/local/include
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include
+         /usr/include
+        End of search list.
+        Compiler executable checksum: e216ca4dc26132f4dd0e2b952db30f47
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_42d43.dir/'
+         as -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include --64 -o CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o /tmp/ccO75iA5.s
+        GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-128.el8_10
+        COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/
+        LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.'
+        Linking C executable cmTC_42d43
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_42d43.dir/link.txt --verbose=1
+        mpicc for MPICH version 5.0.2
+        Using built-in specs.
+        COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/gcc
+        COLLECT_LTO_WRAPPER=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper
+        Target: x86_64-pc-linux-gnu
+        Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c,c++,fortran,lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 13.2.0 (GCC) 
+        COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/
+        LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_42d43' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_42d43.'
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/collect2 -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccI6zb9g.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_42d43 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o
+        collect2 version 13.2.0
+        /usr/bin/ld -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccI6zb9g.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_42d43 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o
+        GNU ld version 2.30-128.el8_10
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_42d43' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_42d43.'
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc  -v -Wl,-v CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o -o cmTC_42d43
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-dqkZsp'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:182 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Parsed C implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed]
+          add: [/usr/local/include]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include] ==> [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed;/usr/local/include;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:218 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?))("|,| |$)]
+        ignore line: [Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-dqkZsp']
+        ignore line: []
+        ignore line: [Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_42d43/fast]
+        ignore line: [/vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_42d43.dir/build.make CMakeFiles/cmTC_42d43.dir/build]
+        ignore line: [gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-dqkZsp']
+        ignore line: [Building C object CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc   -v -o CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o -c /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCCompilerABI.c]
+        ignore line: [mpicc for MPICH version 5.0.2]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/gcc]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c c++ fortran lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 13.2.0 (GCC) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_42d43.dir/']
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/cc1 -quiet -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include -iprefix /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/ /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_42d43.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccO75iA5.s]
+        ignore line: [GNU C17 (GCC) version 13.2.0 (x86_64-pc-linux-gnu)]
+        ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-20)  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.24-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"]
+        ignore line: [ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include"]
+        ignore line: [ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed"]
+        ignore line: [ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [Compiler executable checksum: e216ca4dc26132f4dd0e2b952db30f47]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_42d43.dir/']
+        ignore line: [ as -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include --64 -o CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o /tmp/ccO75iA5.s]
+        ignore line: [GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-128.el8_10]
+        ignore line: [COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/]
+        ignore line: [LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C executable cmTC_42d43]
+        ignore line: [/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_42d43.dir/link.txt --verbose=1]
+        ignore line: [mpicc for MPICH version 5.0.2]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/gcc]
+        ignore line: [COLLECT_LTO_WRAPPER=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c c++ fortran lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 13.2.0 (GCC) ]
+        ignore line: [COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/]
+        ignore line: [LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_42d43' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_42d43.']
+        link line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/collect2 -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccI6zb9g.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_42d43 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o]
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccI6zb9g.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_42d43] ==> ignore
+          arg [/lib/../lib64/crt1.o] ==> obj [/lib/../lib64/crt1.o]
+          arg [/lib/../lib64/crti.o] ==> obj [/lib/../lib64/crti.o]
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o] ==> obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o]
+          arg [-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib] ==> dir [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64]
+          arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+          arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../..] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../..]
+          arg [-v] ==> ignore
+          arg [CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib] ==> ignore
+          arg [-lmpi] ==> lib [mpi]
+          arg [-lgcc] ==> lib [gcc]
+          arg [--push-state] ==> ignore
+          arg [--as-needed] ==> ignore
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [--pop-state] ==> ignore
+          arg [-lc] ==> lib [c]
+          arg [-lgcc] ==> lib [gcc]
+          arg [--push-state] ==> ignore
+          arg [--as-needed] ==> ignore
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [--pop-state] ==> ignore
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o] ==> obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o]
+          arg [/lib/../lib64/crtn.o] ==> obj [/lib/../lib64/crtn.o]
+        ignore line: [collect2 version 13.2.0]
+        ignore line: [/usr/bin/ld -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccI6zb9g.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_42d43 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_42d43.dir/CMakeCCompilerABI.c.o -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o]
+        linker tool for 'C': /usr/bin/ld
+        collapse obj [/lib/../lib64/crt1.o] ==> [/lib64/crt1.o]
+        collapse obj [/lib/../lib64/crti.o] ==> [/lib64/crti.o]
+        collapse obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o]
+        collapse obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o]
+        collapse obj [/lib/../lib64/crtn.o] ==> [/lib64/crtn.o]
+        collapse library dir [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib] ==> [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib64]
+        collapse library dir [/lib/../lib64] ==> [/lib64]
+        collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../..] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib]
+        implicit libs: [mpi;gcc;gcc_s;c;gcc;gcc_s]
+        implicit objs: [/lib64/crt1.o;/lib64/crti.o;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o;/lib64/crtn.o]
+        implicit dirs: [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib64;/lib64;/usr/lib64;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CMakeDetermineLinkerId.cmake:40 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:255 (cmake_determine_linker_id)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Running the C compiler's linker: "/usr/bin/ld" "-v"
+      GNU ld version 2.30-128.el8_10
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:74 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ganrTd"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ganrTd"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ganrTd'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_03db6/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_03db6.dir/build.make CMakeFiles/cmTC_03db6.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ganrTd'
+        Building CXX object CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx   -v -o CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o -c /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp
+        mpicxx for MPICH version 5.0.2
+        Using built-in specs.
+        COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/g++
+        Target: x86_64-pc-linux-gnu
+        Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c,c++,fortran,lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 13.2.0 (GCC) 
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_03db6.dir/'
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/cc1plus -quiet -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include -iprefix /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/ -D_GNU_SOURCE /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_03db6.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccELOF4j.s
+        GNU C++17 (GCC) version 13.2.0 (x86_64-pc-linux-gnu)
+        	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-20), GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.24-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"
+        ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0"
+        ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/x86_64-pc-linux-gnu"
+        ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/backward"
+        ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include"
+        ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed"
+        ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/x86_64-pc-linux-gnu
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/backward
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed
+         /usr/local/include
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include
+         /usr/include
+        End of search list.
+        Compiler executable checksum: 741cbab38dc9d5a9a4c8a9c766163c0e
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_03db6.dir/'
+         as -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include --64 -o CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccELOF4j.s
+        GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-128.el8_10
+        COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/
+        LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX executable cmTC_03db6
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_03db6.dir/link.txt --verbose=1
+        mpicxx for MPICH version 5.0.2
+        Using built-in specs.
+        COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/g++
+        COLLECT_LTO_WRAPPER=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper
+        Target: x86_64-pc-linux-gnu
+        Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c,c++,fortran,lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 13.2.0 (GCC) 
+        COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/
+        LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_03db6' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_03db6.'
+         /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/collect2 -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccz5efAx.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_03db6 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o -lmpicxx -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o
+        collect2 version 13.2.0
+        /usr/bin/ld -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccz5efAx.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_03db6 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o -lmpicxx -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o
+        GNU ld version 2.30-128.el8_10
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_03db6' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_03db6.'
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx  -v -Wl,-v CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_03db6
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ganrTd'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:182 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/x86_64-pc-linux-gnu]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/backward]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed]
+          add: [/usr/local/include]
+          add: [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include] ==> [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include/c++/13.2.0]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/x86_64-pc-linux-gnu] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include/c++/13.2.0/x86_64-pc-linux-gnu]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/backward] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include/c++/13.2.0/backward]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include/c++/13.2.0;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include/c++/13.2.0/x86_64-pc-linux-gnu;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include/c++/13.2.0/backward;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed;/usr/local/include;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/include;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:218 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?))("|,| |$)]
+        ignore line: [Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ganrTd']
+        ignore line: []
+        ignore line: [Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_03db6/fast]
+        ignore line: [/vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_03db6.dir/build.make CMakeFiles/cmTC_03db6.dir/build]
+        ignore line: [gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ganrTd']
+        ignore line: [Building CXX object CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx   -v -o CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o -c /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [mpicxx for MPICH version 5.0.2]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/g++]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c c++ fortran lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 13.2.0 (GCC) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_03db6.dir/']
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/cc1plus -quiet -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include -iprefix /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/ -D_GNU_SOURCE /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_03db6.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccELOF4j.s]
+        ignore line: [GNU C++17 (GCC) version 13.2.0 (x86_64-pc-linux-gnu)]
+        ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-20)  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.24-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"]
+        ignore line: [ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0"]
+        ignore line: [ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/x86_64-pc-linux-gnu"]
+        ignore line: [ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/backward"]
+        ignore line: [ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include"]
+        ignore line: [ignoring duplicate directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed"]
+        ignore line: [ignoring nonexistent directory "/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../x86_64-pc-linux-gnu/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/x86_64-pc-linux-gnu]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../include/c++/13.2.0/backward]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/include-fixed]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/../../include]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [Compiler executable checksum: 741cbab38dc9d5a9a4c8a9c766163c0e]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_03db6.dir/']
+        ignore line: [ as -v -I /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include --64 -o CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccELOF4j.s]
+        ignore line: [GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-128.el8_10]
+        ignore line: [COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/]
+        ignore line: [LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX executable cmTC_03db6]
+        ignore line: [/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_03db6.dir/link.txt --verbose=1]
+        ignore line: [mpicxx for MPICH version 5.0.2]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/g++]
+        ignore line: [COLLECT_LTO_WRAPPER=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: ../gcc-13.2.0/configure --disable-bootstrap --disable-multilib --enable-languages=c c++ fortran lto --prefix=/projects/opt/rhel8/x86_64/gcc/13.2.0]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 13.2.0 (GCC) ]
+        ignore line: [COMPILER_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/]
+        ignore line: [LIBRARY_PATH=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_03db6' '-I' '/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/include' '-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_03db6.']
+        link line: [ /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/collect2 -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccz5efAx.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_03db6 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o -lmpicxx -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o]
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccz5efAx.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_03db6] ==> ignore
+          arg [/lib/../lib64/crt1.o] ==> obj [/lib/../lib64/crt1.o]
+          arg [/lib/../lib64/crti.o] ==> obj [/lib/../lib64/crti.o]
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o] ==> obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o]
+          arg [-L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib] ==> dir [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64]
+          arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+          arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+          arg [-L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../..] ==> dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../..]
+          arg [-v] ==> ignore
+          arg [CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [-lmpicxx] ==> lib [mpicxx]
+          arg [-rpath] ==> ignore
+          arg [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib] ==> ignore
+          arg [-lmpi] ==> lib [mpi]
+          arg [-lstdc++] ==> lib [stdc++]
+          arg [-lm] ==> lib [m]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o] ==> obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o]
+          arg [/lib/../lib64/crtn.o] ==> obj [/lib/../lib64/crtn.o]
+        ignore line: [collect2 version 13.2.0]
+        ignore line: [/usr/bin/ld -plugin /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/liblto_plugin.so -plugin-opt=/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../libexec/gcc/x86_64-pc-linux-gnu/13.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccz5efAx.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_03db6 /lib/../lib64/crt1.o /lib/../lib64/crti.o /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o -L/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../.. -v CMakeFiles/cmTC_03db6.dir/CMakeCXXCompilerABI.cpp.o -lmpicxx -rpath /vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib -lmpi -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o /lib/../lib64/crtn.o]
+        linker tool for 'CXX': /usr/bin/ld
+        collapse obj [/lib/../lib64/crt1.o] ==> [/lib64/crt1.o]
+        collapse obj [/lib/../lib64/crti.o] ==> [/lib64/crti.o]
+        collapse obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o]
+        collapse obj [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o]
+        collapse obj [/lib/../lib64/crtn.o] ==> [/lib64/crtn.o]
+        collapse library dir [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib] ==> [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../../../lib64] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib64]
+        collapse library dir [/lib/../lib64] ==> [/lib64]
+        collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+        collapse library dir [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/bin/../lib/gcc/x86_64-pc-linux-gnu/13.2.0/../../..] ==> [/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib]
+        implicit libs: [mpicxx;mpi;stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+        implicit objs: [/lib64/crt1.o;/lib64/crti.o;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtbegin.o;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0/crtend.o;/lib64/crtn.o]
+        implicit dirs: [/vast/home/ssolod/spack/opt/spack/linux-haswell/mpich-5.0.2-jt5654x2btd6rxo4vtfhhxya5gubijpf/lib;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc/x86_64-pc-linux-gnu/13.2.0;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib/gcc;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib64;/lib64;/usr/lib64;/vast/projects/opt/rhel8/x86_64/gcc/13.2.0/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CMakeDetermineLinkerId.cmake:40 (message)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:255 (cmake_determine_linker_id)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:48 (project)"
+    message: |
+      Running the CXX compiler's linker: "/usr/bin/ld" "-v"
+      GNU ld version 2.30-128.el8_10
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindMPI.cmake:1283 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindMPI.cmake:1677 (_MPI_try_staged_settings)"
+      - "/vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/cmake/hdf5-config.cmake:116 (find_package)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindHDF5.cmake:513 (find_package)"
+      - "CMakeLists.txt:162 (find_package)"
+    description: "The MPI test test_mpi for CXX in mode MPICXX"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mFbDUC"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mFbDUC"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_MPICXX"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mFbDUC'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_4d9f9/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_4d9f9.dir/build.make CMakeFiles/cmTC_4d9f9.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mFbDUC'
+        Building CXX object CMakeFiles/cmTC_4d9f9.dir/test_mpi.cpp.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx   -fPIE -o CMakeFiles/cmTC_4d9f9.dir/test_mpi.cpp.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mFbDUC/test_mpi.cpp
+        Linking CXX executable cmTC_4d9f9
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4d9f9.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_4d9f9.dir/test_mpi.cpp.o -o cmTC_4d9f9
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mFbDUC'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:37 (check_cxx_compiler_flag)"
+      - "CMakeLists.txt:202 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test CXX_SUPPORTS_Wno_unused_variable"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-WuatYu"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-WuatYu"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_SUPPORTS_Wno_unused_variable"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-WuatYu'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_6e603/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_6e603.dir/build.make CMakeFiles/cmTC_6e603.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-WuatYu'
+        Building CXX object CMakeFiles/cmTC_6e603.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_SUPPORTS_Wno_unused_variable  -fPIE   -Wno-unused-variable -o CMakeFiles/cmTC_6e603.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-WuatYu/src.cxx
+        Linking CXX executable cmTC_6e603
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6e603.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_6e603.dir/src.cxx.o -o cmTC_6e603
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-WuatYu'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCCompilerFlag.cmake:56 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:38 (check_c_compiler_flag)"
+      - "CMakeLists.txt:202 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test C_SUPPORTS_Wno_unused_variable"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-T0Xyq9"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-T0Xyq9"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "C_SUPPORTS_Wno_unused_variable"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-T0Xyq9'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_1e735/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_1e735.dir/build.make CMakeFiles/cmTC_1e735.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-T0Xyq9'
+        Building C object CMakeFiles/cmTC_1e735.dir/src.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc -DC_SUPPORTS_Wno_unused_variable  -fPIE   -Wno-unused-variable -o CMakeFiles/cmTC_1e735.dir/src.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-T0Xyq9/src.c
+        Linking C executable cmTC_1e735
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1e735.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc CMakeFiles/cmTC_1e735.dir/src.c.o -o cmTC_1e735
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-T0Xyq9'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:37 (check_cxx_compiler_flag)"
+      - "CMakeLists.txt:203 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test CXX_SUPPORTS_Wno_sign_compare"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-X6oMi3"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-X6oMi3"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_SUPPORTS_Wno_sign_compare"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-X6oMi3'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_5149f/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_5149f.dir/build.make CMakeFiles/cmTC_5149f.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-X6oMi3'
+        Building CXX object CMakeFiles/cmTC_5149f.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_SUPPORTS_Wno_sign_compare  -fPIE   -Wno-sign-compare -o CMakeFiles/cmTC_5149f.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-X6oMi3/src.cxx
+        Linking CXX executable cmTC_5149f
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5149f.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_5149f.dir/src.cxx.o -o cmTC_5149f
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-X6oMi3'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCCompilerFlag.cmake:56 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:38 (check_c_compiler_flag)"
+      - "CMakeLists.txt:203 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test C_SUPPORTS_Wno_sign_compare"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ofHfUm"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ofHfUm"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "C_SUPPORTS_Wno_sign_compare"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ofHfUm'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_79a4b/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_79a4b.dir/build.make CMakeFiles/cmTC_79a4b.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ofHfUm'
+        Building C object CMakeFiles/cmTC_79a4b.dir/src.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc -DC_SUPPORTS_Wno_sign_compare  -fPIE   -Wno-sign-compare -o CMakeFiles/cmTC_79a4b.dir/src.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ofHfUm/src.c
+        Linking C executable cmTC_79a4b
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_79a4b.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc CMakeFiles/cmTC_79a4b.dir/src.c.o -o cmTC_79a4b
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-ofHfUm'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:47 (check_cxx_compiler_flag)"
+      - "CMakeLists.txt:204 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test CXX_SUPPORTS_Wno_reorder"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-MlUL5a"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-MlUL5a"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_SUPPORTS_Wno_reorder"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-MlUL5a'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_25cb7/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_25cb7.dir/build.make CMakeFiles/cmTC_25cb7.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-MlUL5a'
+        Building CXX object CMakeFiles/cmTC_25cb7.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_SUPPORTS_Wno_reorder  -fPIE   -Wno-reorder -o CMakeFiles/cmTC_25cb7.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-MlUL5a/src.cxx
+        Linking CXX executable cmTC_25cb7
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_25cb7.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_25cb7.dir/src.cxx.o -o cmTC_25cb7
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-MlUL5a'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:37 (check_cxx_compiler_flag)"
+      - "CMakeLists.txt:205 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test CXX_SUPPORTS_Wno_unused_function"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-VmC2wr"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-VmC2wr"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_SUPPORTS_Wno_unused_function"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-VmC2wr'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_c3602/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_c3602.dir/build.make CMakeFiles/cmTC_c3602.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-VmC2wr'
+        Building CXX object CMakeFiles/cmTC_c3602.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_SUPPORTS_Wno_unused_function  -fPIE   -Wno-unused-function -o CMakeFiles/cmTC_c3602.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-VmC2wr/src.cxx
+        Linking CXX executable cmTC_c3602
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c3602.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_c3602.dir/src.cxx.o -o cmTC_c3602
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-VmC2wr'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCCompilerFlag.cmake:56 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:38 (check_c_compiler_flag)"
+      - "CMakeLists.txt:205 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test C_SUPPORTS_Wno_unused_function"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-2ryXEF"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-2ryXEF"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "C_SUPPORTS_Wno_unused_function"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-2ryXEF'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_58a9e/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_58a9e.dir/build.make CMakeFiles/cmTC_58a9e.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-2ryXEF'
+        Building C object CMakeFiles/cmTC_58a9e.dir/src.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc -DC_SUPPORTS_Wno_unused_function  -fPIE   -Wno-unused-function -o CMakeFiles/cmTC_58a9e.dir/src.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-2ryXEF/src.c
+        Linking C executable cmTC_58a9e
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_58a9e.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc CMakeFiles/cmTC_58a9e.dir/src.c.o -o cmTC_58a9e
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-2ryXEF'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:37 (check_cxx_compiler_flag)"
+      - "CMakeLists.txt:206 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test CXX_SUPPORTS_Wno_unknown_pragmas"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-55vlFL"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-55vlFL"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_SUPPORTS_Wno_unknown_pragmas"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-55vlFL'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_1df95/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_1df95.dir/build.make CMakeFiles/cmTC_1df95.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-55vlFL'
+        Building CXX object CMakeFiles/cmTC_1df95.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_SUPPORTS_Wno_unknown_pragmas  -fPIE   -Wno-unknown-pragmas -o CMakeFiles/cmTC_1df95.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-55vlFL/src.cxx
+        Linking CXX executable cmTC_1df95
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1df95.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_1df95.dir/src.cxx.o -o cmTC_1df95
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-55vlFL'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCCompilerFlag.cmake:56 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:38 (check_c_compiler_flag)"
+      - "CMakeLists.txt:206 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test C_SUPPORTS_Wno_unknown_pragmas"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-j19Xbs"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-j19Xbs"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "C_SUPPORTS_Wno_unknown_pragmas"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-j19Xbs'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_799f0/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_799f0.dir/build.make CMakeFiles/cmTC_799f0.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-j19Xbs'
+        Building C object CMakeFiles/cmTC_799f0.dir/src.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc -DC_SUPPORTS_Wno_unknown_pragmas  -fPIE   -Wno-unknown-pragmas -o CMakeFiles/cmTC_799f0.dir/src.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-j19Xbs/src.c
+        Linking C executable cmTC_799f0
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_799f0.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc CMakeFiles/cmTC_799f0.dir/src.c.o -o cmTC_799f0
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-j19Xbs'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:37 (check_cxx_compiler_flag)"
+      - "CMakeLists.txt:207 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test CXX_SUPPORTS_Wno_ps_abi"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-JdhZ5e"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-JdhZ5e"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_SUPPORTS_Wno_ps_abi"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-JdhZ5e'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_45c96/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_45c96.dir/build.make CMakeFiles/cmTC_45c96.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-JdhZ5e'
+        Building CXX object CMakeFiles/cmTC_45c96.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_SUPPORTS_Wno_ps_abi  -fPIE   -Wno-ps-abi -o CMakeFiles/cmTC_45c96.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-JdhZ5e/src.cxx
+        Linking CXX executable cmTC_45c96
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_45c96.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_45c96.dir/src.cxx.o -o cmTC_45c96
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-JdhZ5e'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCCompilerFlag.cmake:56 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:38 (check_c_compiler_flag)"
+      - "CMakeLists.txt:207 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test C_SUPPORTS_Wno_ps_abi"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-W6FaIw"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-W6FaIw"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "C_SUPPORTS_Wno_ps_abi"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-W6FaIw'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_1b33c/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_1b33c.dir/build.make CMakeFiles/cmTC_1b33c.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-W6FaIw'
+        Building C object CMakeFiles/cmTC_1b33c.dir/src.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc -DC_SUPPORTS_Wno_ps_abi  -fPIE   -Wno-ps-abi -o CMakeFiles/cmTC_1b33c.dir/src.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-W6FaIw/src.c
+        Linking C executable cmTC_1b33c
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1b33c.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc CMakeFiles/cmTC_1b33c.dir/src.c.o -o cmTC_1b33c
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-W6FaIw'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:37 (check_cxx_compiler_flag)"
+      - "CMakeLists.txt:208 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test CXX_SUPPORTS_Wno_tautological_constant_compare"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-srqF4v"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-srqF4v"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_SUPPORTS_Wno_tautological_constant_compare"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-srqF4v'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_1db52/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_1db52.dir/build.make CMakeFiles/cmTC_1db52.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-srqF4v'
+        Building CXX object CMakeFiles/cmTC_1db52.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_SUPPORTS_Wno_tautological_constant_compare  -fPIE   -Wno-tautological-constant-compare -o CMakeFiles/cmTC_1db52.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-srqF4v/src.cxx
+        Linking CXX executable cmTC_1db52
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1db52.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_1db52.dir/src.cxx.o -o cmTC_1db52
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-srqF4v'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCCompilerFlag.cmake:56 (cmake_check_compiler_flag)"
+      - "cmake/AddCompilerFlagIfSupported.cmake:38 (check_c_compiler_flag)"
+      - "CMakeLists.txt:208 (add_compiler_flag_if_supported)"
+    checks:
+      - "Performing Test C_SUPPORTS_Wno_tautological_constant_compare"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-HT8xsA"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-HT8xsA"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "C_SUPPORTS_Wno_tautological_constant_compare"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-HT8xsA'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_7494a/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_7494a.dir/build.make CMakeFiles/cmTC_7494a.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-HT8xsA'
+        Building C object CMakeFiles/cmTC_7494a.dir/src.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc -DC_SUPPORTS_Wno_tautological_constant_compare  -fPIE   -Wno-tautological-constant-compare -o CMakeFiles/cmTC_7494a.dir/src.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-HT8xsA/src.c
+        Linking C executable cmTC_7494a
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7494a.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc CMakeFiles/cmTC_7494a.dir/src.c.o -o cmTC_7494a
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-HT8xsA'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckIncludeFileCXX.cmake:98 (try_compile)"
+      - "external/parthenon/cmake/FindFilesystem.cmake:163 (check_include_file_cxx)"
+      - "external/parthenon/CMakeLists.txt:171 (find_package)"
+    checks:
+      - "Looking for C++ include filesystem"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mpDyMr"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mpDyMr"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " "
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/parthenon/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "_CXX_FILESYSTEM_HAVE_HEADER"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mpDyMr'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_a6797/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_a6797.dir/build.make CMakeFiles/cmTC_a6797.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mpDyMr'
+        Building CXX object CMakeFiles/cmTC_a6797.dir/CheckIncludeFile.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx   -std=gnu++17 -fPIE -o CMakeFiles/cmTC_a6797.dir/CheckIncludeFile.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mpDyMr/CheckIncludeFile.cxx
+        Linking CXX executable cmTC_a6797
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a6797.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_a6797.dir/CheckIncludeFile.cxx.o -o cmTC_a6797
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-mpDyMr'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXSourceCompiles.cmake:58 (cmake_check_source_compiles)"
+      - "external/parthenon/cmake/FindFilesystem.cmake:211 (check_cxx_source_compiles)"
+      - "external/parthenon/CMakeLists.txt:171 (find_package)"
+    checks:
+      - "Performing Test CXX_FILESYSTEM_NO_LINK_NEEDED"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Vpw7Vd"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Vpw7Vd"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " "
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/parthenon/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CXX_FILESYSTEM_NO_LINK_NEEDED"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Vpw7Vd'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_7ee1d/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_7ee1d.dir/build.make CMakeFiles/cmTC_7ee1d.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Vpw7Vd'
+        Building CXX object CMakeFiles/cmTC_7ee1d.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DCXX_FILESYSTEM_NO_LINK_NEEDED  -fPIE -o CMakeFiles/cmTC_7ee1d.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Vpw7Vd/src.cxx
+        Linking CXX executable cmTC_7ee1d
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7ee1d.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_7ee1d.dir/src.cxx.o -o cmTC_7ee1d
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Vpw7Vd'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCSourceCompiles.cmake:58 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "external/parthenon/CMakeLists.txt:174 (find_package)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Ekfd2K"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Ekfd2K"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " "
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/parthenon/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Ekfd2K'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_74e88/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_74e88.dir/build.make CMakeFiles/cmTC_74e88.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Ekfd2K'
+        Building C object CMakeFiles/cmTC_74e88.dir/src.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc -DCMAKE_HAVE_LIBC_PTHREAD  -fPIE -o CMakeFiles/cmTC_74e88.dir/src.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Ekfd2K/src.c
+        Linking C executable cmTC_74e88
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_74e88.dir/link.txt --verbose=1
+        /usr/bin/ld: CMakeFiles/cmTC_74e88.dir/src.c.o: undefined reference to symbol 'pthread_join@@GLIBC_2.2.5'
+        //usr/lib64/libpthread.so.0: error adding symbols: DSO missing from command line
+        collect2: error: ld returned 1 exit status
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc CMakeFiles/cmTC_74e88.dir/src.c.o -o cmTC_74e88
+        gmake[1]: *** [CMakeFiles/cmTC_74e88.dir/build.make:102: cmTC_74e88] Error 1
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Ekfd2K'
+        gmake: *** [Makefile:134: cmTC_74e88/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckLibraryExists.cmake:78 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindThreads.cmake:175 (_threads_check_lib)"
+      - "external/parthenon/CMakeLists.txt:174 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthreads"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-rhozZl"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-rhozZl"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " "
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/parthenon/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREADS_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-rhozZl'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_c5572/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_c5572.dir/build.make CMakeFiles/cmTC_c5572.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-rhozZl'
+        Building C object CMakeFiles/cmTC_c5572.dir/CheckFunctionExists.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc   -DCHECK_FUNCTION_EXISTS=pthread_create -fPIE -o CMakeFiles/cmTC_c5572.dir/CheckFunctionExists.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-rhozZl/CheckFunctionExists.c
+        Linking C executable cmTC_c5572
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c5572.dir/link.txt --verbose=1
+        /usr/bin/ld: cannot find -lpthreads
+        collect2: error: ld returned 1 exit status
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_c5572.dir/CheckFunctionExists.c.o -o cmTC_c5572  -lpthreads
+        gmake[1]: *** [CMakeFiles/cmTC_c5572.dir/build.make:102: cmTC_c5572] Error 1
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-rhozZl'
+        gmake: *** [Makefile:134: cmTC_c5572/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckLibraryExists.cmake:78 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/FindThreads.cmake:176 (_threads_check_lib)"
+      - "external/parthenon/CMakeLists.txt:174 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthread"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-vKJaMV"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-vKJaMV"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " "
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/parthenon/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREAD_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-vKJaMV'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_844e6/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_844e6.dir/build.make CMakeFiles/cmTC_844e6.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-vKJaMV'
+        Building C object CMakeFiles/cmTC_844e6.dir/CheckFunctionExists.c.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc   -DCHECK_FUNCTION_EXISTS=pthread_create -fPIE -o CMakeFiles/cmTC_844e6.dir/CheckFunctionExists.c.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-vKJaMV/CheckFunctionExists.c
+        Linking C executable cmTC_844e6
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_844e6.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_844e6.dir/CheckFunctionExists.c.o -o cmTC_844e6  -lpthread
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-vKJaMV'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "external/parthenon/external/Kokkos/cmake/kokkos_test_cxx_std.cmake:94 (try_compile)"
+      - "external/parthenon/external/Kokkos/cmake/kokkos_tribits.cmake:174 (include)"
+      - "external/parthenon/external/Kokkos/CMakeLists.txt:216 (kokkos_setup_build_environment)"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/parthenon/Kokkos/corner_cases/CMakeFiles/CMakeTmp"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/parthenon/Kokkos/corner_cases/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " "
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " "
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/parthenon/cmake;cmake/Modules"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "CAN_COMPILE_CPP20"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/parthenon/Kokkos/corner_cases/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_ec26a/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_ec26a.dir/build.make CMakeFiles/cmTC_ec26a.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/parthenon/Kokkos/corner_cases/CMakeFiles/CMakeTmp'
+        Building CXX object CMakeFiles/cmTC_ec26a.dir/cplusplus20.cpp.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx   -std=c++20 -fPIE -o CMakeFiles/cmTC_ec26a.dir/cplusplus20.cpp.o -c /vast/home/ssolod/riot/external/parthenon/external/Kokkos/cmake/compile_tests/cplusplus20.cpp
+        Linking CXX executable cmTC_ec26a
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ec26a.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_ec26a.dir/cplusplus20.cpp.o -o cmTC_ec26a
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/parthenon/Kokkos/corner_cases/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckLinkerFlag.cmake:37 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckLinkerFlag.cmake:44 (cmake_check_linker_flag)"
+      - "external/parthenon/external/Kokkos/cmake/kokkos_functions.cmake:1005 (check_linker_flag)"
+      - "external/parthenon/external/Kokkos/cmake/kokkos_tribits.cmake:286 (kokkos_check_flags)"
+      - "external/parthenon/external/Kokkos/cmake/kokkos_tribits.cmake:423 (kokkos_set_library_properties)"
+      - "external/parthenon/external/Kokkos/core/src/CMakeLists.txt:126 (kokkos_add_library)"
+    checks:
+      - "Performing Test KOKKOS_LINK_OPTIONS_CHECK"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-4E6RUA"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-4E6RUA"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " "
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/parthenon/cmake;cmake/Modules;/vast/home/ssolod/riot/external/parthenon/external/Kokkos/cmake/Modules/"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "KOKKOS_LINK_OPTIONS_CHECK"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-4E6RUA'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_c8bc1/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_c8bc1.dir/build.make CMakeFiles/cmTC_c8bc1.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-4E6RUA'
+        Building CXX object CMakeFiles/cmTC_c8bc1.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DKOKKOS_LINK_OPTIONS_CHECK  -std=c++20 -fPIE -o CMakeFiles/cmTC_c8bc1.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-4E6RUA/src.cxx
+        Linking CXX executable cmTC_c8bc1
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c8bc1.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DKOKKOS_DEPENDENCE CMakeFiles/cmTC_c8bc1.dir/src.cxx.o -o cmTC_c8bc1
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-4E6RUA'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "external/singularity-eos/utils/pybind11/tools/pybind11Common.cmake:332 (check_cxx_compiler_flag)"
+      - "external/singularity-eos/utils/pybind11/tools/pybind11Common.cmake:377 (_pybind11_return_if_cxx_and_linker_flags_work)"
+      - "external/singularity-eos/utils/pybind11/tools/pybind11Common.cmake:438 (_pybind11_generate_lto)"
+      - "external/singularity-eos/utils/pybind11/CMakeLists.txt:298 (include)"
+    checks:
+      - "Performing Test HAS_FLTO_AUTO"
+    directories:
+      source: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Sp0D0G"
+      binary: "/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Sp0D0G"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/vast/home/ssolod/riot/cmake;/vast/home/ssolod/riot/external/singularity-eos/cmake"
+      CMAKE_POSITION_INDEPENDENT_CODE: "ON"
+    buildResult:
+      variable: "HAS_FLTO_AUTO"
+      cached: true
+      stdout: |
+        Change Dir: '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Sp0D0G'
+        
+        Run Build Command(s): /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E env VERBOSE=1 /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake -f Makefile cmTC_10cc1/fast
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/gmake  -f CMakeFiles/cmTC_10cc1.dir/build.make CMakeFiles/cmTC_10cc1.dir/build
+        gmake[1]: Entering directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Sp0D0G'
+        Building CXX object CMakeFiles/cmTC_10cc1.dir/src.cxx.o
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx -DHAS_FLTO_AUTO  -fPIE   -flto=auto -fno-fat-lto-objects -o CMakeFiles/cmTC_10cc1.dir/src.cxx.o -c /vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Sp0D0G/src.cxx
+        Linking CXX executable cmTC_10cc1
+        /vast/home/ssolod/spack/opt/spack/linux-haswell/cmake-3.31.12-6bo22dmluiaz6nevb76wlnuol2nq5zvx/bin/cmake -E cmake_link_script CMakeFiles/cmTC_10cc1.dir/link.txt --verbose=1
+        /vast/home/ssolod/spack/var/spack/environments/riot_env/.spack-env/view/bin/mpicxx CMakeFiles/cmTC_10cc1.dir/src.cxx.o -o cmTC_10cc1  -flto=auto
+        gmake[1]: Leaving directory '/vast/home/ssolod/riot/cartesianBuild/CMakeFiles/CMakeScratch/TryCompile-Sp0D0G'
+        
+      exitCode: 0
+...

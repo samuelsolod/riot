@@ -12,20 +12,25 @@
 # the public, perform publicly and display publicly, and to permit others to do so.
 # ========================================================================================
 
-"""Interactive PHDF viewer for 2-D Matplotlib plots.
+"""Interactive PHDF viewer for 2-D Matplotlib plots, with run comparison.
 
 Run with
 
     python phdf_plot_gui.py
     python phdf_plot_gui.py path/to/dump.phdf
+    python phdf_plot_gui.py path/to/runA/dump.phdf path/to/runB/dump.phdf
 
 The PHDF reader must be importable as either ``phdf`` or
 ``parthenon_tools.phdf``. Tkinter is included with most python.org and Conda
 Python installations on macOS.
+
+MP4 export requires the ``ffmpeg`` executable (e.g. ``brew install ffmpeg``).
 """
 
 from __future__ import annotations
 
+import os
+import shutil
 import sys
 import traceback
 import math
@@ -69,6 +74,35 @@ COLORS = (
     "#000000",
 )
 
+RUN_LABELS = ("A", "B")
+
+# Resolution used when rendering movie frames (independent of savefig.dpi,
+# which is intentionally very high for publication figures).
+MOVIE_DPI = 200
+
+# A valid movie with real frames should be larger than this many bytes.
+MIN_VALID_MOVIE_BYTES = 1024
+
+# Places to look for ffmpeg if it is not on the PATH seen by the GUI process.
+FFMPEG_FALLBACK_PATHS = (
+    "/opt/homebrew/bin/ffmpeg",  # Apple-silicon Homebrew
+    "/usr/local/bin/ffmpeg",  # Intel Homebrew / manual installs
+    "/usr/bin/ffmpeg",
+    "/opt/local/bin/ffmpeg",  # MacPorts
+)
+
+
+def configure_ffmpeg() -> None:
+    """Point Matplotlib at an ffmpeg executable if one can be found."""
+    found = shutil.which("ffmpeg")
+    if found is None:
+        for candidate in FFMPEG_FALLBACK_PATHS:
+            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+                found = candidate
+                break
+    if found is not None:
+        mpl.rcParams["animation.ffmpeg_path"] = found
+
 
 def configure_publication_style() -> None:
     """Apply compact, vector-output-friendly plotting defaults."""
@@ -98,6 +132,7 @@ def configure_publication_style() -> None:
             "svg.fonttype": "none",
         }
     )
+    configure_ffmpeg()
 
 
 def coordinate_edges(centers: np.ndarray) -> np.ndarray:
@@ -162,16 +197,44 @@ def plottable_variables(dump) -> list[str]:
     return sorted(variables)
 
 
+def dump_dimension(dump) -> int:
+    """Infer whether a mesh should be plotted as 1-D or 2-D."""
+    y = np.asarray(dump.y)
+    return 1 if y.ndim < 2 or y.shape[-1] == 1 else 2
+
+
+def exception_details(exc: BaseException) -> str:
+    """Return the exception text plus any captured subprocess (ffmpeg) output."""
+    detail = str(exc)
+    extra = getattr(exc, "stderr", None) or getattr(exc, "output", None)
+    if isinstance(extra, bytes):
+        extra = extra.decode(errors="replace")
+    if extra:
+        extra = str(extra).strip()
+        if extra and extra not in detail:
+            detail += "\n\nffmpeg output (last lines):\n" + extra[-1500:]
+    return detail
+
+
 class PhdfPlotGui(tk.Tk):
-    def __init__(self, initial_file: str | None = None) -> None:
+    def __init__(
+        self, initial_file: str | None = None, compare_file: str | None = None
+    ) -> None:
         super().__init__()
         self.title("PHDF Plot Viewer")
-        self.geometry("1050x850")
+        self.geometry("1050x900")
         self.minsize(850, 600)
 
         self.dump = None
         self.dump_path: Path | None = None
         self.dump_paths: list[Path] = []
+
+        # Comparison run (run B)
+        self.dump2 = None
+        self.dump2_path: Path | None = None
+        self.dump2_paths: list[Path] = []
+        self._dump2_times: dict[Path, float] = {}
+
         self.field_data: np.ndarray | None = None
         self.colorbar = None
         self.colorbars = []
@@ -200,6 +263,7 @@ class PhdfPlotGui(tk.Tk):
         self.log_var = tk.BooleanVar(value=False)
         self.mesh_var = tk.BooleanVar(value=False)
         self.equal_aspect_var = tk.BooleanVar(value=True)
+        self.lock_colorscale_var = tk.BooleanVar(value=False)
         self.vmin_var = tk.StringVar()
         self.vmax_var = tk.StringVar()
         self.xmin_var = tk.StringVar()
@@ -209,13 +273,25 @@ class PhdfPlotGui(tk.Tk):
         self.floor_var = tk.StringVar(value="1e-30")
         self.status_var = tk.StringVar(value="Choose a PHDF dump to begin")
 
+        # Comparison controls
+        self.compare_var = tk.BooleanVar(value=False)
+        self.sync_time_var = tk.BooleanVar(value=True)
+        self.dump2_label_var = tk.StringVar(value="Run B: (none)")
+
         self._build_controls()
         self._build_figure()
 
         self.protocol("WM_DELETE_WINDOW", self.close)
         if initial_file:
-            self.after(50, lambda: self.load_dump(Path(initial_file)))
+            self.after(50, lambda: self._startup(initial_file, compare_file))
 
+    def _startup(self, initial_file: str, compare_file: str | None) -> None:
+        """Load run A, then optionally run B given on the command line."""
+        if compare_file:
+            self._open_dump2(Path(compare_file), replot=False)
+        self.load_dump(Path(initial_file))
+
+    # ------------------------------------------------------------------ GUI
     def _build_controls(self) -> None:
         panel = ttk.Frame(self, padding=6)
         panel.pack(side=tk.LEFT, fill=tk.Y)
@@ -230,7 +306,9 @@ class PhdfPlotGui(tk.Tk):
         )
         row += 1
 
-        ttk.Label(panel, text="Dump").grid(row=row, column=0, sticky="w", pady=(8, 2))
+        ttk.Label(panel, text="Dump (run A)").grid(
+            row=row, column=0, sticky="w", pady=(8, 2)
+        )
         row += 1
         self.dump_combo = ttk.Combobox(
             panel, textvariable=self.dump_var, state="readonly", width=33
@@ -269,6 +347,33 @@ class PhdfPlotGui(tk.Tk):
         ttk.Checkbutton(playback, text="Loop", variable=self.loop_var).grid(
             row=0, column=3
         )
+        row += 1
+
+        # ---- Comparison run -------------------------------------------------
+        compare = ttk.LabelFrame(panel, text="Comparison run (B)", padding=4)
+        compare.grid(row=row, column=0, columnspan=2, sticky="ew", pady=(8, 2))
+        compare.columnconfigure((0, 1), weight=1)
+        ttk.Button(
+            compare, text="Open second run…", command=self.choose_dump2
+        ).grid(row=0, column=0, sticky="ew", padx=(0, 2))
+        ttk.Button(compare, text="Clear", command=self.clear_dump2).grid(
+            row=0, column=1, sticky="ew", padx=(2, 0)
+        )
+        ttk.Label(
+            compare, textvariable=self.dump2_label_var, wraplength=250
+        ).grid(row=1, column=0, columnspan=2, sticky="w", pady=(3, 0))
+        ttk.Checkbutton(
+            compare,
+            text="Show side-by-side",
+            variable=self.compare_var,
+            command=self._compare_toggled,
+        ).grid(row=2, column=0, columnspan=2, sticky="w")
+        ttk.Checkbutton(
+            compare,
+            text="Match B to A by time (else by index)",
+            variable=self.sync_time_var,
+            command=self._compare_toggled,
+        ).grid(row=3, column=0, columnspan=2, sticky="w")
         row += 1
 
         ttk.Label(panel, text="Variable").grid(
@@ -372,6 +477,11 @@ class PhdfPlotGui(tk.Tk):
         ttk.Checkbutton(
             checks, text="Equal aspect", variable=self.equal_aspect_var
         ).pack(anchor="w")
+        ttk.Checkbutton(
+            checks,
+            text="Lock color scale",
+            variable=self.lock_colorscale_var,
+        ).pack(anchor="w")
         row += 1
 
         ttk.Separator(panel).grid(row=row, column=0, columnspan=2, sticky="ew", pady=8)
@@ -395,7 +505,7 @@ class PhdfPlotGui(tk.Tk):
             row=0, column=1, sticky="ew", padx=(2, 0)
         )
         row += 1
-        ttk.Button(panel, text="Save figure…", command=self.save_figure).grid(
+        ttk.Button(panel, text="Save figure / movie…", command=self.save_figure).grid(
             row=row, column=0, columnspan=2, sticky="ew", padx=2, pady=2
         )
         row += 1
@@ -451,6 +561,8 @@ class PhdfPlotGui(tk.Tk):
 
     def _canvas_resized(self, _event=None) -> None:
         """Debounce resize events so styling follows the window smoothly."""
+        if self.exporting:
+            return
         if self._resize_job is not None:
             self.after_cancel(self._resize_job)
         self._resize_job = self.after(120, self._finish_canvas_resize)
@@ -460,9 +572,9 @@ class PhdfPlotGui(tk.Tk):
         if (
             self.panel_layout_var.get() == "Auto"
             and self.dump is not None
-            and self.line_panels
+            and (self.line_panels or self._comparison_active())
         ):
-            new_shape = self._panel_grid_shape(1 + len(self.line_panels))
+            new_shape = self._panel_grid_shape(self._panel_count())
             if new_shape != self._last_panel_grid_shape:
                 self.plot()
                 return
@@ -514,6 +626,7 @@ class PhdfPlotGui(tk.Tk):
         if draw:
             self.canvas.draw_idle()
 
+    # ------------------------------------------------------- dump navigation
     def choose_dump(self) -> None:
         self.pause_playback()
         filename = filedialog.askopenfilename(
@@ -600,7 +713,135 @@ class PhdfPlotGui(tk.Tk):
     def reload_dump(self) -> None:
         self.pause_playback()
         if self.dump_path:
+            # Force run B to be reopened as well.
+            self.dump2_path = None
+            self._dump2_times.clear()
             self.load_dump(self.dump_path)
+
+    # ---------------------------------------------------- comparison run (B)
+    def _comparison_active(self) -> bool:
+        return bool(self.compare_var.get() and self.dump2 is not None)
+
+    def _panel_count(self) -> int:
+        count = 1 + len(self.line_panels)
+        return 2 * count if self._comparison_active() else count
+
+    def choose_dump2(self) -> None:
+        self.pause_playback()
+        filename = filedialog.askopenfilename(
+            title="Open comparison PHDF dump (run B)",
+            filetypes=(("PHDF dumps", "*.phdf"), ("All files", "*")),
+        )
+        if filename:
+            self._open_dump2(Path(filename), replot=True)
+
+    def _open_dump2(self, path: Path, replot: bool) -> None:
+        try:
+            path = path.expanduser().resolve()
+            self.dump2_paths = sorted(path.parent.glob("*.phdf"))
+            self._dump2_times.clear()
+            self.dump2_path = None  # force (re)open
+            self.compare_var.set(True)
+            self._sync_comparison(initial=path)
+            if replot and self.dump is not None:
+                self._refit_after_change()
+                self.plot()
+        except Exception as exc:
+            self._show_error("Could not open comparison run", exc)
+
+    def clear_dump2(self) -> None:
+        self.pause_playback()
+        self._close_dump2()
+        self.dump2_paths = []
+        self._dump2_times.clear()
+        self.compare_var.set(False)
+        self.dump2_label_var.set("Run B: (none)")
+        if self.dump is not None:
+            self._refit_after_change()
+            self.plot()
+
+    def _close_dump2(self) -> None:
+        if self.dump2 is not None and hasattr(self.dump2, "fid"):
+            try:
+                self.dump2.fid.close()
+            except Exception:
+                pass
+        self.dump2 = None
+        self.dump2_path = None
+
+    def _compare_toggled(self) -> None:
+        if self.dump is None:
+            return
+        try:
+            self._sync_comparison()
+            self._refit_after_change()
+            self.plot()
+        except Exception as exc:
+            self._show_error("Could not update comparison", exc)
+
+    def _refit_after_change(self) -> None:
+        """Re-fit ranges so they cover whichever runs are currently shown."""
+        if self.dump is None or not self.variable_var.get():
+            return
+        if not self.lock_colorscale_var.get():
+            self._auto_color_range(redraw=False)
+        self._auto_spatial_range(redraw=False)
+
+    def _time_of(self, path: Path) -> float:
+        if path not in self._dump2_times:
+            d = phdf.phdf(str(path))
+            try:
+                self._dump2_times[path] = float(getattr(d, "Time", 0.0))
+            finally:
+                try:
+                    d.fid.close()
+                except Exception:
+                    pass
+        return self._dump2_times[path]
+
+    def _sync_comparison(self, initial: Path | None = None) -> None:
+        """Select the run-B dump that corresponds to the current run-A dump."""
+        if not self.compare_var.get() or not self.dump2_paths:
+            return
+        if initial is not None:
+            target = initial
+        elif self.dump is None or self.dump_path is None:
+            return
+        elif self.sync_time_var.get():
+            t = float(getattr(self.dump, "Time", 0.0))
+            target = min(self.dump2_paths, key=lambda q: abs(self._time_of(q) - t))
+        else:
+            try:
+                i = self.dump_paths.index(self.dump_path)
+            except ValueError:
+                i = 0
+            target = self.dump2_paths[min(i, len(self.dump2_paths) - 1)]
+
+        if target == self.dump2_path and self.dump2 is not None:
+            return
+
+        new_dump = phdf.phdf(str(target))
+        if self.dump is not None and dump_dimension(new_dump) != dump_dimension(
+            self.dump
+        ):
+            try:
+                new_dump.fid.close()
+            except Exception:
+                pass
+            raise ValueError(
+                "Run B has a different dimensionality than run A; "
+                "both runs must be 1-D or both 2-D."
+            )
+
+        old = self.dump2
+        self.dump2 = new_dump
+        self.dump2_path = target
+        self.dump2_label_var.set(f"Run B: {target.parent.name}/{target.name}")
+        if old is not None and hasattr(old, "fid"):
+            try:
+                old.fid.close()
+            except Exception:
+                pass
 
     def load_dump(self, path: Path) -> None:
         try:
@@ -620,6 +861,9 @@ class PhdfPlotGui(tk.Tk):
             self.dump_combo["values"] = [p.name for p in self.dump_paths]
             self.dump_var.set(path.name)
 
+            # Keep run B in step with run A (no-op if comparison is off).
+            self._sync_comparison()
+
             variables = plottable_variables(self.dump)
             self.variable_combo["values"] = variables
             old_variable = self.variable_var.get()
@@ -631,19 +875,31 @@ class PhdfPlotGui(tk.Tk):
             self.field_data = None
             if variables:
                 self.load_variable()
-                # A newly selected dump gets its own data and coordinate ranges.
-                self.auto_ranges(redraw=False)
+                # A newly selected dump gets its own spatial ranges. The
+                # color scale is only auto-fit here when it is not locked, so
+                # playback and movie export can hold a fixed, comparable
+                # colorbar across frames when desired.
+                if not self.lock_colorscale_var.get():
+                    self._auto_color_range(redraw=False)
+                self._auto_spatial_range(redraw=False)
                 self.plot()
             else:
                 self.status_var.set(f"No plottable field datasets found in {path.name}")
         except Exception as exc:
+            if self.exporting:
+                # Let export_movie abort rather than silently repeating a frame.
+                raise
             self._show_error("Could not load dump", exc)
 
     def _variable_selected(self, _event=None) -> None:
-        self.load_variable()
-        self.auto_ranges(redraw=False)
-        self.plot()
+        try:
+            self.load_variable()
+            self._refit_after_change()
+            self.plot()
+        except Exception as exc:
+            self._show_error("Could not load variable", exc)
 
+    # ------------------------------------------------------ additional panels
     def add_line_panel(self) -> None:
         self._open_panel_dialog(None)
 
@@ -768,6 +1024,10 @@ class PhdfPlotGui(tk.Tk):
         """Choose rows and columns from the explicit or automatic layout setting."""
         if panel_count <= 1:
             return 1, 1
+        # Comparison mode: panels are interleaved A,B,A,B,... so use two
+        # columns (run A left, run B right) and one row per variable.
+        if self._comparison_active() and panel_count % 2 == 0:
+            return panel_count // 2, 2
         layout = self.panel_layout_var.get()
         if layout == "Left–right":
             return 1, panel_count
@@ -786,8 +1046,13 @@ class PhdfPlotGui(tk.Tk):
     def _log_toggled(self) -> None:
         """Apply log color scaling in 2-D or a log y axis in 1-D."""
         if self.dump is not None and self.variable_var.get():
-            self.auto_ranges(redraw=True)
+            try:
+                self._refit_after_change()
+                self.plot()
+            except Exception as exc:
+                self._show_error("Could not update scale", exc)
 
+    # --------------------------------------------------------- data handling
     def load_variable(self) -> None:
         if self.dump is None or not self.variable_var.get():
             return
@@ -816,14 +1081,32 @@ class PhdfPlotGui(tk.Tk):
         """Infer whether the current mesh should be plotted as 1-D or 2-D."""
         if self.dump is None:
             return 2
-        y = np.asarray(self.dump.y)
-        return 1 if y.ndim < 2 or y.shape[-1] == 1 else 2
+        return dump_dimension(self.dump)
 
     def _selected_blocks(self) -> list[np.ndarray]:
         if self.field_data is None:
             self.load_variable()
         assert self.field_data is not None
         return self._blocks_from_field_data(self.field_data, self.indices_var.get())
+
+    def _load_blocks(self, dump, variable: str, indices_text: str) -> list[np.ndarray]:
+        """Read ``variable`` from ``dump`` and return one spatial array per block."""
+        try:
+            field_data = np.asarray(dump.Get(variable, flatten=False))
+        except Exception as exc:
+            raise ValueError(
+                f"Could not read '{variable}' from the comparison run: {exc}"
+            ) from exc
+        return self._blocks_from_field_data(field_data, indices_text)
+
+    def _selected_blocks_all_runs(self) -> list[np.ndarray]:
+        """Primary-variable blocks from run A (and run B when comparing)."""
+        blocks = list(self._selected_blocks())
+        if self._comparison_active():
+            blocks += self._load_blocks(
+                self.dump2, self.variable_var.get(), self.indices_var.get()
+            )
+        return blocks
 
     def _blocks_from_field_data(
         self, field_data: np.ndarray, indices_text: str
@@ -850,45 +1133,73 @@ class PhdfPlotGui(tk.Tk):
         values = np.concatenate([np.asarray(a).ravel() for a in blocks])
         values = values[np.isfinite(values)]
         if positive:
-            floor = float(self.floor_var.get())
-            values = values[values > max(floor, 0.0)]
+            floor = max(float(self.floor_var.get()), 0.0)
+            values = values[values > floor]
         if values.size == 0:
-            qualifier = "positive " if positive else "finite "
-            raise ValueError(f"The selected field contains no {qualifier}values")
+            if positive:
+                # Nothing positive to show on a log scale (all zero/negative).
+                # Fall back to a valid dummy decade so plotting and movie export
+                # continue; the panel will simply appear empty.
+                floor = float(self.floor_var.get())
+                lo = floor if floor > 0 else 1.0e-30
+                return lo, lo * 10.0
+            raise ValueError("The selected field contains no finite values")
         lo, hi = float(values.min()), float(values.max())
         if lo == hi:
             if positive:
                 lo, hi = lo / 1.1, hi * 1.1
             else:
-                # Give a constant linear field a visible, nonzero color span.
-                # The absolute floor is useful for fields that are identically
-                # zero or very close to it.
                 delta = max(abs(lo) * 1.0e-6, 1.0e-6)
                 lo, hi = lo - delta, hi + delta
         return lo, hi
 
+    def _auto_color_range(self, redraw=True) -> None:
+        """Fit vmin/vmax from the selected field's finite values (all shown runs)."""
+        blocks = self._selected_blocks_all_runs()
+        lo, hi = self._finite_range(blocks, positive=self.log_var.get())
+        self.vmin_var.set(f"{lo:.8g}")
+        self.vmax_var.set(f"{hi:.8g}")
+        if redraw:
+            self.plot()
+
+    def _auto_spatial_range(self, redraw=True) -> None:
+        """Fit x/y limits from the mesh and field extrema of all shown runs."""
+        if self.dump is None:
+            return
+        blocks = self._selected_blocks_all_runs()
+        is_1d = self._plot_dimension() == 1
+        lo, hi = self._finite_range(blocks, positive=self.log_var.get())
+
+        dumps = [self.dump]
+        if self._comparison_active():
+            dumps.append(self.dump2)
+        xmin = min(float(np.nanmin(d.x)) for d in dumps)
+        xmax = max(float(np.nanmax(d.x)) for d in dumps)
+        self.xmin_var.set(f"{xmin:.8g}")
+        self.xmax_var.set(f"{xmax:.8g}")
+        if is_1d:
+            if self.log_var.get():
+                padding_factor = (hi / lo) ** 0.03
+                self.ymin_var.set(f"{lo / padding_factor:.8g}")
+                self.ymax_var.set(f"{hi * padding_factor:.8g}")
+            else:
+                padding = 0.03 * (hi - lo)
+                self.ymin_var.set(f"{lo - padding:.8g}")
+                self.ymax_var.set(f"{hi + padding:.8g}")
+        else:
+            ymin = min(float(np.nanmin(d.y)) for d in dumps)
+            ymax = max(float(np.nanmax(d.y)) for d in dumps)
+            self.ymin_var.set(f"{ymin:.8g}")
+            self.ymax_var.set(f"{ymax:.8g}")
+        if redraw:
+            self.plot()
+
     def auto_ranges(self, redraw=True) -> None:
+        """Refit both color and spatial ranges, honoring the color-scale lock."""
         try:
-            blocks = self._selected_blocks()
-            is_1d = self._plot_dimension() == 1
-            lo, hi = self._finite_range(blocks, positive=self.log_var.get())
-            self.vmin_var.set(f"{lo:.8g}")
-            self.vmax_var.set(f"{hi:.8g}")
-            if self.dump is not None:
-                self.xmin_var.set(f"{np.nanmin(self.dump.x):.8g}")
-                self.xmax_var.set(f"{np.nanmax(self.dump.x):.8g}")
-                if is_1d:
-                    if self.log_var.get():
-                        padding_factor = (hi / lo) ** 0.03
-                        self.ymin_var.set(f"{lo / padding_factor:.8g}")
-                        self.ymax_var.set(f"{hi * padding_factor:.8g}")
-                    else:
-                        padding = 0.03 * (hi - lo)
-                        self.ymin_var.set(f"{lo - padding:.8g}")
-                        self.ymax_var.set(f"{hi + padding:.8g}")
-                else:
-                    self.ymin_var.set(f"{np.nanmin(self.dump.y):.8g}")
-                    self.ymax_var.set(f"{np.nanmax(self.dump.y):.8g}")
+            if not self.lock_colorscale_var.get():
+                self._auto_color_range(redraw=False)
+            self._auto_spatial_range(redraw=False)
             if redraw:
                 self.plot()
         except Exception as exc:
@@ -905,13 +1216,24 @@ class PhdfPlotGui(tk.Tk):
         return lo - padding, hi + padding
 
     def _panel_specs(self, main_blocks: list[np.ndarray]) -> list[dict]:
-        """Load the primary and additional variables for the current dump."""
-        specs = [
+        """Build panel descriptions for the current dump(s).
+
+        Each spec has:
+          variable, indices, blocks   - what to draw
+          main                        - True for the primary variable (A or B)
+          dump                        - the dump supplying x/y coordinates
+          run, tag                    - 0/1 and a title string (comparison only)
+          group_blocks                - blocks of every run for this variable, so
+                                        paired panels share one color/y scale.
+        When comparing, panels are interleaved A, B, A, B, ... so a two-column
+        grid puts run A on the left and run B on the right.
+        """
+        base = [
             {
                 "variable": self.variable_var.get(),
                 "indices": self.indices_var.get(),
                 "blocks": main_blocks,
-                "primary": True,
+                "main": True,
             }
         ]
         available = set(self.variable_combo["values"])
@@ -922,19 +1244,55 @@ class PhdfPlotGui(tk.Tk):
                     f"Additional panel variable '{variable}' is absent from "
                     f"{self.dump_path.name}"
                 )
-            field_data = np.asarray(self.dump.Get(variable, flatten=False))
-            specs.append(
+            base.append(
                 {
                     "variable": variable,
                     "indices": panel["indices"],
-                    "blocks": self._blocks_from_field_data(
-                        field_data, panel["indices"]
-                    ),
-                    "primary": False,
+                    "blocks": self._load_blocks(self.dump, variable, panel["indices"]),
+                    "main": False,
                 }
             )
+
+        comparing = self._comparison_active()
+        specs = []
+        for item in base:
+            if comparing:
+                blocks_b = self._load_blocks(
+                    self.dump2, item["variable"], item["indices"]
+                )
+                group = list(item["blocks"]) + list(blocks_b)
+                specs.append(
+                    {
+                        **item,
+                        "dump": self.dump,
+                        "run": 0,
+                        "tag": f"{RUN_LABELS[0]}: {self.dump_path.parent.name}",
+                        "group_blocks": group,
+                    }
+                )
+                specs.append(
+                    {
+                        **item,
+                        "blocks": blocks_b,
+                        "dump": self.dump2,
+                        "run": 1,
+                        "tag": f"{RUN_LABELS[1]}: {self.dump2_path.parent.name}",
+                        "group_blocks": group,
+                    }
+                )
+            else:
+                specs.append(
+                    {
+                        **item,
+                        "dump": self.dump,
+                        "run": 0,
+                        "tag": "",
+                        "group_blocks": item["blocks"],
+                    }
+                )
         return specs
 
+    # ---------------------------------------------------------------- plotting
     def _plot_1d_panels(
         self,
         main_blocks: list[np.ndarray],
@@ -942,8 +1300,9 @@ class PhdfPlotGui(tk.Tk):
         line_width: float,
         title: str,
     ) -> None:
-        """Draw the primary field and all requested extra fields as stacked panels."""
+        """Draw the primary field and all requested extra fields as panels."""
         specs = self._panel_specs(main_blocks)
+        comparing = self._comparison_active()
 
         rows, columns = self._panel_grid_shape(len(specs))
         self._last_panel_grid_shape = (rows, columns)
@@ -969,8 +1328,9 @@ class PhdfPlotGui(tk.Tk):
             )
             axes.append(axes_object)
             panel_blocks = spec["blocks"]
+            dump = spec["dump"]
             for block, data in enumerate(panel_blocks):
-                x = np.asarray(self.dump.x[block, :])
+                x = np.asarray(dump.x[block, :])
                 if data.shape != x.shape:
                     raise ValueError(
                         f"{spec['variable']}, block {block}: data shape {data.shape} "
@@ -979,7 +1339,7 @@ class PhdfPlotGui(tk.Tk):
                 (data_line,) = axes_object.plot(
                     x,
                     data,
-                    color=COLORS[0],
+                    color=COLORS[spec["run"] % len(COLORS)],
                     linewidth=max(1.4, 1.4 * line_width),
                 )
                 self.data_lines.append(data_line)
@@ -995,14 +1355,17 @@ class PhdfPlotGui(tk.Tk):
 
             axes_object.set_ylabel(spec["variable"])
             axes_object.set_yscale("log" if positive else "linear")
-            if spec["primary"]:
+            if comparing:
+                axes_object.set_title(spec["tag"])
+            # Paired panels share limits computed over both runs.
+            auto_ymin, auto_ymax = self._line_y_limits(spec["group_blocks"], positive)
+            if spec["main"]:
                 ymin = optional_float(self.ymin_var.get())
                 ymax = optional_float(self.ymax_var.get())
-                auto_ymin, auto_ymax = self._line_y_limits(panel_blocks, positive)
                 ymin = auto_ymin if ymin is None else ymin
                 ymax = auto_ymax if ymax is None else ymax
             else:
-                ymin, ymax = self._line_y_limits(panel_blocks, positive)
+                ymin, ymax = auto_ymin, auto_ymax
             if positive and ymin <= 0:
                 raise ValueError(
                     f"Log y scaling requires a positive y minimum for {spec['variable']}"
@@ -1026,7 +1389,7 @@ class PhdfPlotGui(tk.Tk):
         self.canvas.draw_idle()
         self.status_var.set(
             f"{len(specs)} line panel{'s' if len(specs) != 1 else ''}  |  "
-            f"{self.dump_path.name}"
+            f"{self._status_names()}"
         )
 
     def _color_norm(
@@ -1070,6 +1433,7 @@ class PhdfPlotGui(tk.Tk):
     ) -> None:
         """Draw primary and additional 2-D fields with independent colorbars."""
         specs = self._panel_specs(main_blocks)
+        comparing = self._comparison_active()
         rows, columns = self._panel_grid_shape(len(specs))
         self._last_panel_grid_shape = (rows, columns)
         grid = self.figure.add_gridspec(
@@ -1098,19 +1462,25 @@ class PhdfPlotGui(tk.Tk):
             )
             axes.append(axes_object)
             panel_blocks = spec["blocks"]
-            requested_vmin = (
-                optional_float(self.vmin_var.get()) if spec["primary"] else None
-            )
-            requested_vmax = (
-                optional_float(self.vmax_var.get()) if spec["primary"] else None
-            )
+            dump = spec["dump"]
+            # When the color scale is locked, every panel (not just the
+            # primary one) respects the fixed vmin/vmax typed into the entry
+            # boxes, so frame-to-frame comparisons stay valid.
+            if spec["main"] or self.lock_colorscale_var.get():
+                requested_vmin = optional_float(self.vmin_var.get())
+                requested_vmax = optional_float(self.vmax_var.get())
+            else:
+                requested_vmin = None
+                requested_vmax = None
+            # The norm is built from both runs' data for this variable, so run
+            # A and run B panels of a pair always share an identical scale.
             norm, _, _ = self._color_norm(
-                panel_blocks, positive, requested_vmin, requested_vmax
+                spec["group_blocks"], positive, requested_vmin, requested_vmax
             )
             pcol = None
             for block, data in enumerate(panel_blocks):
-                xedges = coordinate_edges(self.dump.x[block, :])
-                yedges = coordinate_edges(self.dump.y[block, :])
+                xedges = coordinate_edges(dump.x[block, :])
+                yedges = coordinate_edges(dump.y[block, :])
                 expected_shape = (len(yedges) - 1, len(xedges) - 1)
                 if data.shape != expected_shape:
                     raise ValueError(
@@ -1141,6 +1511,8 @@ class PhdfPlotGui(tk.Tk):
             colorbar = self.figure.colorbar(pcol, cax=colorbar_axes)
             colorbar.set_label(spec["variable"])
             self.colorbars.append(colorbar)
+            if comparing:
+                axes_object.set_title(spec["tag"])
             if column == 0:
                 axes_object.set_ylabel("y")
             else:
@@ -1169,8 +1541,28 @@ class PhdfPlotGui(tk.Tk):
         self.canvas.draw_idle()
         self.status_var.set(
             f"{len(specs)} 2-D panel{'s' if len(specs) != 1 else ''}  |  "
-            f"{self.dump_path.name}"
+            f"{self._status_names()}"
         )
+
+    def _status_names(self) -> str:
+        if self._comparison_active():
+            return f"A: {self.dump_path.name}  |  B: {self.dump2_path.name}"
+        return self.dump_path.name
+
+    def _make_title(self) -> str:
+        def one(dump, path: Path | None) -> str:
+            text = path.name if path else "PHDF"
+            time = getattr(dump, "Time", None)
+            if time is not None:
+                text += f"    t = {float(time):.3e} s"
+            return text
+
+        if self._comparison_active():
+            return (
+                f"A: {one(self.dump, self.dump_path)}\n"
+                f"B: {one(self.dump2, self.dump2_path)}"
+            )
+        return one(self.dump, self.dump_path)
 
     def plot(self) -> None:
         try:
@@ -1185,43 +1577,54 @@ class PhdfPlotGui(tk.Tk):
 
             self.figure.clear()
             self.figure_title = None
-            time = getattr(self.dump, "Time", None)
-            title = self.dump_path.name if self.dump_path else "PHDF"
-            if time is not None:
-                title += f"    t = {float(time):.3e} s"
+            title = self._make_title()
             if is_1d:
                 self._plot_1d_panels(blocks, positive, line_width, title)
             else:
                 self._plot_2d_panels(blocks, positive, line_width, title)
         except Exception as exc:
+            if self.exporting:
+                # Propagate to load_dump/export_movie so the export aborts.
+                raise
             self._show_error("Could not plot field", exc)
 
+    # ------------------------------------------------------------ saving/export
     def save_figure(self) -> None:
+        """Save the current figure; .mp4/.gif are routed to the movie exporter."""
         if self.dump_path is None:
             return
         suggested = (
-            f"{self.dump_path.stem}_{self.variable_var.get().replace('.', '_')}.pdf"
+            f"{self.dump_path.stem}_{self.variable_var.get().replace('.', '_')}"
         )
+        if self._comparison_active():
+            suggested += "_compare"
+        suggested += ".pdf"
         filename = filedialog.asksaveasfilename(
-            title="Save figure",
+            title="Save figure or movie",
             initialfile=suggested,
             defaultextension=".pdf",
             filetypes=(
                 ("PDF vector figure", "*.pdf"),
                 ("SVG vector figure", "*.svg"),
                 ("PNG image", "*.png"),
+                ("MP4 movie (all dumps)", "*.mp4"),
+                ("Animated GIF (all dumps)", "*.gif"),
                 ("All files", "*"),
             ),
         )
-        if filename:
-            try:
-                self.figure.savefig(filename)
-                self.status_var.set(f"Saved {filename}")
-            except Exception as exc:
-                self._show_error("Could not save figure", exc)
+        if not filename:
+            return
+        if Path(filename).suffix.lower() in {".mp4", ".gif"}:
+            self.export_movie(filename)
+            return
+        try:
+            self.figure.savefig(filename)
+            self.status_var.set(f"Saved {filename}")
+        except Exception as exc:
+            self._show_error("Could not save figure", exc)
 
-    def export_movie(self) -> None:
-        """Render all dumps in the selected directory to MP4 or animated GIF."""
+    def export_movie(self, filename: str | None = None) -> None:
+        """Render all run-A dumps (with matching run-B dumps) to MP4 or GIF."""
         if self.dump_path is None:
             return
         self.pause_playback()
@@ -1234,12 +1637,15 @@ class PhdfPlotGui(tk.Tk):
             return
 
         variable_slug = self.variable_var.get().replace(".", "_")
-        filename = filedialog.asksaveasfilename(
-            title="Export all dumps as a movie",
-            initialfile=f"{variable_slug}.mp4",
-            defaultextension=".mp4",
-            filetypes=(("MP4 movie", "*.mp4"), ("Animated GIF", "*.gif")),
-        )
+        if self._comparison_active():
+            variable_slug += "_compare"
+        if not filename:
+            filename = filedialog.asksaveasfilename(
+                title="Export all dumps as a movie",
+                initialfile=f"{variable_slug}.mp4",
+                defaultextension=".mp4",
+                filetypes=(("MP4 movie", "*.mp4"), ("Animated GIF", "*.gif")),
+            )
         if not filename:
             return
 
@@ -1254,8 +1660,12 @@ class PhdfPlotGui(tk.Tk):
             self._show_error(
                 "FFmpeg is not available",
                 RuntimeError(
-                    "MP4 export requires ffmpeg. On macOS, install it with:\n"
-                    "brew install ffmpeg\n\nAlternatively, export an animated GIF."
+                    "MP4 export requires ffmpeg. Install it with one of:\n"
+                    "  macOS:   brew install ffmpeg\n"
+                    "  Ubuntu:  sudo apt install ffmpeg\n"
+                    "  Conda:   conda install -c conda-forge ffmpeg\n\n"
+                    "Make sure it is on the PATH of the shell that launches this "
+                    "GUI, or export an animated GIF instead."
                 ),
             )
             return
@@ -1271,40 +1681,98 @@ class PhdfPlotGui(tk.Tk):
 
         original_path = self.dump_path
         frame_paths = list(self.dump_paths)
+        original_size = self.figure.get_size_inches().copy()
+        was_resizable = self.resizable()
+        self.resizable(False, False)  # keep the frame size constant
+        self.update_idletasks()
         self.exporting = True
         movie_saved = False
+        export_failed = False
+
+        # Fix the movie frame size once: an even number of pixels in each
+        # direction at MOVIE_DPI (H.264/yuv420p requires even dimensions).
+        # It is re-applied before every frame because Tk <Configure> events
+        # (e.g. triggered by status-label updates) can otherwise resize the
+        # Matplotlib figure mid-export, which corrupts the raw-video stream
+        # fed to ffmpeg.
+        w_in, h_in = original_size
+        w_px = max(2, int(round(w_in * MOVIE_DPI)) // 2 * 2)
+        h_px = max(2, int(round(h_in * MOVIE_DPI)) // 2 * 2)
+        locked_size = (w_px / MOVIE_DPI, h_px / MOVIE_DPI)
+
         try:
-            writer = (
-                animation.FFMpegWriter(
+            if suffix == ".mp4":
+                writer = animation.FFMpegWriter(
                     fps=fps,
+                    codec="libx264",
+                    extra_args=[
+                        # Broad player compatibility (QuickTime, browsers).
+                        "-pix_fmt",
+                        "yuv420p",
+                        # Put the index at the front so players/browsers can
+                        # start without reading the entire file.
+                        "-movflags",
+                        "+faststart",
+                    ],
                     metadata={"title": variable_slug, "artist": "PHDF Plot Viewer"},
                 )
-                if suffix == ".mp4"
-                else animation.PillowWriter(fps=fps)
-            )
-            with writer.saving(self.figure, filename, dpi=self.figure.dpi):
-                for frame_number, path in enumerate(frame_paths, start=1):
-                    self.status_var.set(
-                        f"Exporting frame {frame_number}/{len(frame_paths)}: {path.name}"
-                    )
-                    self.update_idletasks()
-                    self.load_dump(path)
-                    self.canvas.draw()
-                    writer.grab_frame()
+            else:
+                writer = animation.PillowWriter(fps=fps)
+
+            self.figure.set_size_inches(*locked_size, forward=False)
+
+            # savefig.bbox="tight" would make each frame a slightly different
+            # size, which breaks video encoders, so disable it for the export.
+            with mpl.rc_context({"savefig.bbox": None}):
+                with writer.saving(self.figure, filename, dpi=MOVIE_DPI):
+                    for frame_number, path in enumerate(frame_paths, start=1):
+                        self.status_var.set(
+                            f"Exporting frame {frame_number}/{len(frame_paths)}: "
+                            f"{path.name}"
+                        )
+                        self.update_idletasks()
+                        self.load_dump(path)
+                        # Undo any Tk-driven resize before grabbing the frame.
+                        self.figure.set_size_inches(*locked_size, forward=False)
+                        self.canvas.draw()
+                        writer.grab_frame()
+
+            size_bytes = os.path.getsize(filename) if os.path.exists(filename) else 0
+            if size_bytes < MIN_VALID_MOVIE_BYTES:
+                raise RuntimeError(
+                    f"The movie file is only {size_bytes} bytes, so no video "
+                    "frames were written. Check the terminal for ffmpeg errors."
+                )
             movie_saved = True
         except Exception as exc:
+            export_failed = True
+            self.exporting = False
+            # Do not leave an unplayable, truncated file behind.
+            try:
+                if os.path.exists(filename):
+                    os.remove(filename)
+            except OSError:
+                pass
             self._show_error("Could not export movie", exc)
         finally:
             self.exporting = False
+            self.resizable(*was_resizable)
+            try:
+                self.figure.set_size_inches(*original_size, forward=False)
+            except Exception:
+                pass
             if original_path is not None and original_path.exists():
                 self.load_dump(original_path)
             if movie_saved:
                 self.status_var.set(f"Saved movie: {filename}")
+            elif export_failed:
+                self.status_var.set("Movie export failed (see error dialog)")
 
     def _show_error(self, heading: str, exc: Exception) -> None:
+        detail = exception_details(exc)
         self.status_var.set(f"Error: {exc}")
         traceback.print_exc()
-        messagebox.showerror(heading, str(exc), parent=self)
+        messagebox.showerror(heading, detail, parent=self)
 
     def close(self) -> None:
         self.pause_playback()
@@ -1313,13 +1781,15 @@ class PhdfPlotGui(tk.Tk):
                 self.dump.fid.close()
             except Exception:
                 pass
+        self._close_dump2()
         self.destroy()
 
 
 def main() -> None:
     configure_publication_style()
     initial_file = sys.argv[1] if len(sys.argv) > 1 else None
-    app = PhdfPlotGui(initial_file)
+    compare_file = sys.argv[2] if len(sys.argv) > 2 else None
+    app = PhdfPlotGui(initial_file, compare_file)
     app.mainloop()
 
 
