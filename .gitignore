@@ -68,3 +68,6 @@ inputs/radiation_transport/prompt/prompt_opacity.sp5
 inputs/radiation_transport/prompt/prompt.png
 inputs/radiation_transport/prompt/*.phdf
 inputs/radiation_transport/prompt/*.xdmf
+build_cartesian/
+build_cylindrical/
+cartesianBuild/
