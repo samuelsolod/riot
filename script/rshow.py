@@ -33,10 +33,12 @@ MP4 export requires the ``ffmpeg`` executable (e.g. ``brew install ffmpeg``).
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import sys
 import traceback
 import math
+import warnings
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
@@ -48,12 +50,13 @@ matplotlib.use("TkAgg")
 import matplotlib as mpl
 import matplotlib.animation as animation
 import matplotlib.colors as mcolors
+import matplotlib.ticker as mticker
+import h5py
 import numpy as np
 from cycler import cycler
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.collections import LineCollection
 from matplotlib.figure import Figure
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 try:
     import phdf
@@ -145,6 +148,9 @@ def configure_publication_style() -> None:
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
             "svg.fonttype": "none",
+            # Compact tick labels: "×10^7" offsets instead of long numbers.
+            "axes.formatter.use_mathtext": True,
+            "axes.formatter.limits": (-3, 4),
         }
     )
     configure_ffmpeg()
@@ -227,6 +233,39 @@ def rasterize_blocks(
         jj = np.clip(np.searchsorted(ve, yc[j0:j1], side="right") - 1, 0, ve.size - 2)
         image[j0:j1, i0:i1] = blocks[b][np.ix_(jj, ii)]
     return image, (x0, x1, y0, y1)
+
+
+def dump_series(path: Path) -> list[Path]:
+    """Dumps of the same output series as ``path`` (e.g. ``radflow.out1.*.phdf``).
+
+    A plain ``*.phdf`` glob would mix in other output blocks or problems that
+    share the directory (``out2``, ``radflow_3d`` ...), which may have different
+    variables or dimensionality.
+    """
+    match = re.fullmatch(r"(.*?)(\d+)", path.stem)
+    if match is None:
+        return sorted(path.parent.glob("*.phdf"))
+    prefix = match.group(1)
+    pattern = re.compile(re.escape(prefix) + r"\d+")
+    series = [
+        candidate
+        for candidate in path.parent.glob(f"{glob_escape(prefix)}*.phdf")
+        if pattern.fullmatch(candidate.stem)
+    ]
+    return sorted(series) or [path]
+
+
+def glob_escape(text: str) -> str:
+    return re.sub(r"([*?\[])", r"[\1]", text)
+
+
+def dump_time(path: Path) -> float | None:
+    """Simulation time stored in a dump, read cheaply (``None`` if unreadable)."""
+    try:
+        with h5py.File(path, "r") as handle:
+            return float(handle["Info"].attrs["Time"])
+    except Exception:
+        return None
 
 
 def dump_cache(dump) -> dict:
@@ -339,7 +378,7 @@ class PhdfPlotGui(tk.Tk):
         self.dump2 = None
         self.dump2_path: Path | None = None
         self.dump2_paths: list[Path] = []
-        self._dump2_times: dict[Path, float] = {}
+        self._dump2_times: dict[Path, float | None] = {}
 
         self.field_data: np.ndarray | None = None
         self.colorbar = None
@@ -370,8 +409,12 @@ class PhdfPlotGui(tk.Tk):
         self.mesh_var = tk.BooleanVar(value=False)
         self.equal_aspect_var = tk.BooleanVar(value=True)
         self.lock_colorscale_var = tk.BooleanVar(value=False)
-        self.vmin_var = tk.StringVar()
-        self.vmax_var = tk.StringVar()
+        # Locked value ranges, keyed by (variable, indices, log): set the first
+        # time a panel is drawn while "Lock value scale" is on.
+        self._locked_ranges: dict[tuple, tuple[float, float]] = {}
+        # Layout gutters only grow while the panel structure is unchanged, so
+        # playback and movies do not jitter as tick labels change width.
+        self._layout_memory: tuple | None = None
         self.xmin_var = tk.StringVar()
         self.xmax_var = tk.StringVar()
         self.ymin_var = tk.StringVar()
@@ -634,10 +677,6 @@ class PhdfPlotGui(tk.Tk):
         row += 1
         self._entry_row(panel, row, "Base font size", self.font_size_var)
         row += 1
-        self._entry_row(panel, row, "Color min", self.vmin_var)
-        row += 1
-        self._entry_row(panel, row, "Color max", self.vmax_var)
-        row += 1
         self._entry_row(panel, row, "Log floor", self.floor_var)
         row += 1
 
@@ -663,8 +702,9 @@ class PhdfPlotGui(tk.Tk):
         ).pack(anchor="w")
         ttk.Checkbutton(
             checks,
-            text="Lock color scale",
+            text="Lock value scale across dumps",
             variable=self.lock_colorscale_var,
+            command=self._lock_toggled,
         ).pack(anchor="w")
         ttk.Checkbutton(
             checks,
@@ -688,7 +728,7 @@ class PhdfPlotGui(tk.Tk):
         buttons = ttk.Frame(panel)
         buttons.grid(row=row, column=0, columnspan=2, sticky="ew", pady=(10, 2))
         buttons.columnconfigure((0, 1), weight=1)
-        ttk.Button(buttons, text="Plot", command=self.plot).grid(
+        ttk.Button(buttons, text="Plot", command=self._replot_fresh).grid(
             row=0, column=0, sticky="ew", padx=(0, 2)
         )
         ttk.Button(buttons, text="Auto ranges", command=self.auto_ranges).grid(
@@ -715,9 +755,9 @@ class PhdfPlotGui(tk.Tk):
     def _build_figure(self) -> None:
         right = ttk.Frame(self)
         right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        # Axes positions are managed explicitly below so changing colorbar tick
-        # label widths cannot shift the data axes during playback.
-        self.figure = Figure(figsize=(6, 5), dpi=100, constrained_layout=False)
+        # Axes positions are managed by _layout_figure (measured gutters, uniform
+        # aspect-correct panels) rather than by a Matplotlib layout engine.
+        self.figure = Figure(figsize=(6, 5), dpi=100, layout="none")
         self.canvas = FigureCanvasTkAgg(self.figure, master=right)
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(fill=tk.BOTH, expand=True)
@@ -732,8 +772,8 @@ class PhdfPlotGui(tk.Tk):
             fill=tk.X, padx=5
         )
 
-    def _style_metrics(self) -> tuple[float, float]:
-        """Return responsive font and line sizes for the current canvas."""
+    def _style_metrics(self, grid_shape: tuple[int, int] | None = None) -> tuple[float, float]:
+        """Return responsive font and line sizes for the canvas and panel grid."""
         base_font = float(self.font_size_var.get())
         if base_font <= 0:
             raise ValueError("Base font size must be positive")
@@ -745,6 +785,9 @@ class PhdfPlotGui(tk.Tk):
             scale = float(
                 np.clip(np.sqrt((width * height) / (700.0 * 650.0)), 0.85, 1.6)
             )
+            # Smaller text when the canvas is split into more panels.
+            rows, columns = grid_shape or self._last_panel_grid_shape or (1, 1)
+            scale *= max(0.66, 1.0 - 0.12 * (max(rows, columns) - 1))
         font_size = base_font * scale
         line_width = 1.1 * scale
         return font_size, line_width
@@ -768,7 +811,11 @@ class PhdfPlotGui(tk.Tk):
             if new_shape != self._last_panel_grid_shape:
                 self.plot()
                 return
-        self._apply_plot_style()
+        self._apply_plot_style(draw=False)
+        self._layout_figure()
+        if self._raster_panels:
+            self._rerender_rasters(draw=False)
+        self.canvas.draw_idle()
 
     def _apply_plot_style(self, draw=True) -> None:
         """Scale plot text, ticks, spines, and outlines as one visual system."""
@@ -779,17 +826,21 @@ class PhdfPlotGui(tk.Tk):
             font_size, line_width = self._style_metrics()
         except (TypeError, ValueError):
             return
-        tick_font = max(font_size - 1.0, 1.0)
-        major_length = 0.42 * font_size
-        minor_length = 0.25 * font_size
+        tick_font = max(font_size - 1.5, 1.0)
+        major_length = 0.38 * font_size
+        minor_length = 0.22 * font_size
 
+        all_axes = list(self.figure.axes)
         for axes in self.figure.axes:
+            all_axes += axes.child_axes  # colorbars are attached as child axes
+        for axes in all_axes:
             axes.tick_params(
                 axis="both",
                 which="major",
                 labelsize=tick_font,
                 length=major_length,
                 width=line_width,
+                pad=0.25 * font_size,
             )
             axes.tick_params(
                 axis="both",
@@ -801,7 +852,9 @@ class PhdfPlotGui(tk.Tk):
                 spine.set_linewidth(line_width)
             axes.xaxis.label.set_fontsize(font_size)
             axes.yaxis.label.set_fontsize(font_size)
-            axes.title.set_fontsize(font_size)
+            axes.xaxis.offsetText.set_fontsize(tick_font)
+            axes.yaxis.offsetText.set_fontsize(tick_font)
+            axes.title.set_fontsize(0.9 * font_size)
 
         for colorbar in self.colorbars:
             colorbar.ax.yaxis.label.set_fontsize(font_size)
@@ -816,7 +869,6 @@ class PhdfPlotGui(tk.Tk):
         if draw:
             self.canvas.draw_idle()
 
-    # ------------------------------------------------------- dump navigation
     def choose_dump(self) -> None:
         self.pause_playback()
         filename = filedialog.askopenfilename(
@@ -928,7 +980,7 @@ class PhdfPlotGui(tk.Tk):
     def _open_dump2(self, path: Path, replot: bool) -> None:
         try:
             path = path.expanduser().resolve()
-            self.dump2_paths = sorted(path.parent.glob("*.phdf"))
+            self.dump2_paths = dump_series(path)
             self._dump2_times.clear()
             self.dump2_path = None  # force (re)open
             self.compare_var.set(True)
@@ -970,46 +1022,70 @@ class PhdfPlotGui(tk.Tk):
             self._show_error("Could not update comparison", exc)
 
     def _refit_after_change(self) -> None:
-        """Re-fit ranges so they cover whichever runs are currently shown."""
+        """Re-fit spatial ranges so they cover whichever runs are currently shown."""
         if self.dump is None or not self.variable_var.get():
             return
-        if not self.lock_colorscale_var.get():
-            self._auto_color_range(redraw=False)
         self._auto_spatial_range(redraw=False)
 
-    def _time_of(self, path: Path) -> float:
-        if path not in self._dump2_times:
-            d = phdf.phdf(str(path))
-            try:
-                self._dump2_times[path] = float(getattr(d, "Time", 0.0))
-            finally:
-                try:
-                    d.fid.close()
-                except Exception:
-                    pass
+    def _time_of(self, path: Path) -> float | None:
+        """Cached run-B dump time; ``None`` for files that cannot be read yet."""
+        if self._dump2_times.get(path) is None:
+            self._dump2_times[path] = dump_time(path)
         return self._dump2_times[path]
 
     def _sync_comparison(self, initial: Path | None = None) -> None:
-        """Select the run-B dump that corresponds to the current run-A dump."""
+        """Select the run-B dump that corresponds to the current run-A dump.
+
+        Matching by time works for runs with different numbers of dumps or
+        output cadences: run B shows its dump closest in time to run A (its
+        last dump once run A goes past the end of run B). Unreadable run-B files
+        (e.g. a dump still being written) are skipped instead of aborting, and
+        if no run-B dump can be opened the previous one stays on screen.
+        """
         if not self.compare_var.get() or not self.dump2_paths:
             return
         if initial is not None:
-            target = initial
-        elif self.dump is None or self.dump_path is None:
+            self._open_dump2_file(initial, strict=True)
             return
-        elif self.sync_time_var.get():
+        if self.dump is None or self.dump_path is None:
+            return
+
+        candidates: list[Path] = []
+        if self.sync_time_var.get():
             t = float(getattr(self.dump, "Time", 0.0))
-            target = min(self.dump2_paths, key=lambda q: abs(self._time_of(q) - t))
-        else:
+            timed = [(p, self._time_of(p)) for p in self.dump2_paths]
+            timed = [(p, tb) for p, tb in timed if tb is not None]
+            candidates = [p for p, tb in sorted(timed, key=lambda item: abs(item[1] - t))]
+        if not candidates:
+            # Index matching (or no readable times): clamp to run B's length.
             try:
                 i = self.dump_paths.index(self.dump_path)
             except ValueError:
                 i = 0
-            target = self.dump2_paths[min(i, len(self.dump2_paths) - 1)]
+            i = min(i, len(self.dump2_paths) - 1)
+            candidates = [self.dump2_paths[i]] + self.dump2_paths[i - 1 :: -1][:2]
 
-        if target == self.dump2_path and self.dump2 is not None:
+        if self.dump2 is not None and candidates[0] == self.dump2_path:
             return
+        problems = []
+        for target in candidates[:4]:
+            try:
+                self._open_dump2_file(target, strict=False)
+                if problems:
+                    self.status_var.set(
+                        f"Run B: skipped unreadable {', '.join(problems)}"
+                    )
+                return
+            except Exception as exc:
+                problems.append(f"{target.name} ({exc})")
+                self._dump2_times[target] = None
+        self.status_var.set(
+            "Run B: could not open a matching dump; showing the previous one. "
+            + "; ".join(problems)
+        )
 
+    def _open_dump2_file(self, target: Path, strict: bool) -> None:
+        """Open ``target`` as the run-B dump (raising if it is unusable)."""
         new_dump = phdf.phdf(str(target))
         if self.dump is not None and dump_dimension(new_dump) != dump_dimension(
             self.dump
@@ -1022,7 +1098,6 @@ class PhdfPlotGui(tk.Tk):
                 "Run B has a different dimensionality than run A; "
                 "both runs must be 1-D, 2-D, or 3-D."
             )
-
         old = self.dump2
         self.dump2 = new_dump
         self.dump2_path = target
@@ -1047,7 +1122,7 @@ class PhdfPlotGui(tk.Tk):
                     pass
 
             self.dump_path = path
-            self.dump_paths = sorted(path.parent.glob("*.phdf"))
+            self.dump_paths = dump_series(path)
             self.dump_combo["values"] = [p.name for p in self.dump_paths]
             self.dump_var.set(path.name)
 
@@ -1066,12 +1141,8 @@ class PhdfPlotGui(tk.Tk):
             self.field_data = None
             if variables:
                 self.load_variable()
-                # A newly selected dump gets its own spatial ranges. The
-                # color scale is only auto-fit here when it is not locked, so
-                # playback and movie export can hold a fixed, comparable
-                # colorbar across frames when desired.
-                if not self.lock_colorscale_var.get():
-                    self._auto_color_range(redraw=False)
+                # A newly selected dump gets its own spatial ranges (in 1-D the
+                # y range is held while the value scale is locked).
                 self._auto_spatial_range(redraw=False)
                 self.plot()
             else:
@@ -1451,8 +1522,6 @@ class PhdfPlotGui(tk.Tk):
         if self.dump is None or self._plot_dimension() != 3:
             return
         try:
-            if not self.lock_colorscale_var.get():
-                self._auto_color_range(redraw=False)
             if refit_space:
                 self._auto_spatial_range(redraw=False)
             self.plot()
@@ -1517,15 +1586,6 @@ class PhdfPlotGui(tk.Tk):
                 lo, hi = lo - delta, hi + delta
         return lo, hi
 
-    def _auto_color_range(self, redraw=True) -> None:
-        """Fit vmin/vmax from the selected field's finite values (all shown runs)."""
-        blocks = self._selected_blocks_all_runs()
-        lo, hi = self._finite_range(blocks, positive=self.log_var.get())
-        self.vmin_var.set(f"{lo:.8g}")
-        self.vmax_var.set(f"{hi:.8g}")
-        if redraw:
-            self.plot()
-
     def _auto_spatial_range(self, redraw=True) -> None:
         """Fit x/y limits from the mesh and field extrema of all shown runs."""
         if self.dump is None:
@@ -1541,7 +1601,9 @@ class PhdfPlotGui(tk.Tk):
         xmax = max(float(np.nanmax(d.x)) for d in dumps)
         self.xmin_var.set(f"{xmin:.8g}")
         self.xmax_var.set(f"{xmax:.8g}")
-        if is_1d:
+        if is_1d and self.lock_colorscale_var.get() and self.ymin_var.get().strip():
+            pass  # value scale locked: keep the current y range
+        elif is_1d:
             if self.log_var.get():
                 padding_factor = (hi / lo) ** 0.03
                 self.ymin_var.set(f"{lo / padding_factor:.8g}")
@@ -1551,11 +1613,12 @@ class PhdfPlotGui(tk.Tk):
                 self.ymin_var.set(f"{lo - padding:.8g}")
                 self.ymax_var.set(f"{hi + padding:.8g}")
         else:
+            # Fit to cell edges so boundary cells are shown in full.
             horizontal, vertical = self._plane_axes()[:2]
-            xmin = min(float(np.nanmin(dump_coordinate(d, horizontal))) for d in dumps)
-            xmax = max(float(np.nanmax(dump_coordinate(d, horizontal))) for d in dumps)
-            ymin = min(float(np.nanmin(dump_coordinate(d, vertical))) for d in dumps)
-            ymax = max(float(np.nanmax(dump_coordinate(d, vertical))) for d in dumps)
+            xmin = min(float(np.nanmin(dump_edges(d, horizontal))) for d in dumps)
+            xmax = max(float(np.nanmax(dump_edges(d, horizontal))) for d in dumps)
+            ymin = min(float(np.nanmin(dump_edges(d, vertical))) for d in dumps)
+            ymax = max(float(np.nanmax(dump_edges(d, vertical))) for d in dumps)
             self.xmin_var.set(f"{xmin:.8g}")
             self.xmax_var.set(f"{xmax:.8g}")
             self.ymin_var.set(f"{ymin:.8g}")
@@ -1564,15 +1627,42 @@ class PhdfPlotGui(tk.Tk):
             self.plot()
 
     def auto_ranges(self, redraw=True) -> None:
-        """Refit both color and spatial ranges, honoring the color-scale lock."""
+        """Refit spatial ranges (and release any locked value scale)."""
         try:
-            if not self.lock_colorscale_var.get():
-                self._auto_color_range(redraw=False)
+            self._locked_ranges.clear()
+            if self.lock_colorscale_var.get():
+                self.ymin_var.set("")
             self._auto_spatial_range(redraw=False)
             if redraw:
                 self.plot()
         except Exception as exc:
             self._show_error("Could not determine ranges", exc)
+
+    def _lock_toggled(self) -> None:
+        """Locking captures the scale shown now; unlocking resumes auto-fitting."""
+        self._locked_ranges.clear()
+        if self.dump is not None and self.variable_var.get():
+            try:
+                self._auto_spatial_range(redraw=False)
+                self.plot()
+            except Exception as exc:
+                self._show_error("Could not update scale", exc)
+
+    def _replot_fresh(self) -> None:
+        """Plot button: re-measure the layout from scratch, then draw."""
+        self._layout_memory = None
+        self.plot()
+
+    def _value_range(self, spec: dict, positive: bool, padded: bool) -> tuple[float, float]:
+        """Auto (or locked) value range shared by the run A/B panels of a variable."""
+        if padded:
+            lo, hi = self._line_y_limits(spec["group_blocks"], positive)
+        else:
+            lo, hi = self._finite_range(spec["group_blocks"], positive=positive)
+        if not self.lock_colorscale_var.get():
+            return lo, hi
+        key = (spec["variable"], spec["indices"].strip(), positive, padded)
+        return self._locked_ranges.setdefault(key, (lo, hi))
 
     def _line_y_limits(
         self, blocks: list[np.ndarray], positive: bool
@@ -1675,25 +1765,19 @@ class PhdfPlotGui(tk.Tk):
 
         rows, columns = self._panel_grid_shape(len(specs))
         self._last_panel_grid_shape = (rows, columns)
-        grid = self.figure.add_gridspec(
-            rows,
-            columns,
-            left=0.11,
-            right=0.96,
-            bottom=0.08,
-            top=0.91,
-            hspace=0.14,
-            wspace=0.28,
-        )
+        grid = self.figure.add_gridspec(rows, columns)
         axes = []
         self.data_lines = []
         self.mesh_lines = []
         self.colorbar = None
         self.colorbars = []
+        self._raster_panels = []
         for panel_index, spec in enumerate(specs):
             row, column = divmod(panel_index, columns)
+            # Run B shares run A's y axis (same limits), so its y ticks are hidden.
+            share_y = axes[-1] if comparing and spec["run"] == 1 else None
             axes_object = self.figure.add_subplot(
-                grid[row, column], sharex=axes[0] if axes else None
+                grid[row, column], sharex=axes[0] if axes else None, sharey=share_y
             )
             axes.append(axes_object)
             panel_blocks = spec["blocks"]
@@ -1729,12 +1813,15 @@ class PhdfPlotGui(tk.Tk):
                 )
                 self.mesh_lines.append(mesh_line)
 
-            axes_object.set_ylabel(spec["variable"])
+            if share_y is None:
+                axes_object.set_ylabel(spec["variable"])
+            else:
+                axes_object.tick_params(labelleft=False)
             axes_object.set_yscale("log" if positive else "linear")
-            if comparing:
-                axes_object.set_title(spec["tag"])
+            if comparing and row == 0:
+                axes_object.set_title(self._run_header(spec["run"]))
             # Paired panels share limits computed over both runs.
-            auto_ymin, auto_ymax = self._line_y_limits(spec["group_blocks"], positive)
+            auto_ymin, auto_ymax = self._value_range(spec, positive, padded=True)
             if spec["main"]:
                 ymin = optional_float(self.ymin_var.get())
                 ymax = optional_float(self.ymax_var.get())
@@ -1747,8 +1834,6 @@ class PhdfPlotGui(tk.Tk):
                     f"Log y scaling requires a positive y minimum for {spec['variable']}"
                 )
             axes_object.set_ylim(ymin, ymax)
-            if row < rows - 1:
-                axes_object.tick_params(labelbottom=False)
 
         self.line_panel_axes = axes
         self.main_axes = axes[0]
@@ -1756,49 +1841,27 @@ class PhdfPlotGui(tk.Tk):
         xmax = optional_float(self.xmax_var.get())
         if xmin is not None or xmax is not None:
             axes[0].set_xlim(left=xmin, right=xmax)
-        for panel_index, axes_object in enumerate(axes):
-            row, _ = divmod(panel_index, columns)
-            if row == rows - 1:
-                axes_object.set_xlabel("x")
-        self.figure_title = self.figure.suptitle(title, y=0.985)
-        self._apply_plot_style(draw=False)
-        self.canvas.draw_idle()
+        self._label_bottom_edges(axes, columns, "x")
+        self._finish_figure(title, rows, columns, aspect=None)
         self.status_var.set(
             f"{len(specs)} line panel{'s' if len(specs) != 1 else ''}  |  "
             f"{self._status_names()}"
         )
 
-    def _color_norm(
-        self,
-        blocks: list[np.ndarray],
-        positive: bool,
-        vmin: float | None = None,
-        vmax: float | None = None,
-    ) -> tuple[mcolors.Normalize, float, float]:
-        auto_lo, auto_hi = self._finite_range(blocks, positive=positive)
-        vmin = auto_lo if vmin is None else vmin
-        vmax = auto_hi if vmax is None else vmax
+    def _color_norm(self, spec: dict, positive: bool) -> mcolors.Normalize:
+        """Color normalization for a panel (shared by its run A/B pair)."""
+        vmin, vmax = self._value_range(spec, positive, padded=False)
         if positive:
             vmin = max(vmin, float(self.floor_var.get()))
             if vmin <= 0:
                 raise ValueError("Log color scaling requires a positive color minimum")
-        if vmin == vmax:
-            # Equal explicit limits (or values rounded equal in the GUI) are
-            # harmless: expand them here so Normalize never sees a zero-width
-            # interval. Keep logarithmic limits strictly positive.
-            if positive:
-                vmin, vmax = vmin / 1.1, vmax * 1.1
-            else:
-                delta = max(abs(vmin) * 1.0e-6, 1.0e-6)
-                vmin, vmax = vmin - delta, vmax + delta
-        elif vmin > vmax:
-            raise ValueError("Color min must be smaller than color max")
-        norm = (
+            if vmin >= vmax:
+                vmin, vmax = vmax / 10.0, vmax
+        return (
             mcolors.LogNorm(vmin=vmin, vmax=vmax)
             if positive
             else mcolors.Normalize(vmin=vmin, vmax=vmax)
         )
-        return norm, vmin, vmax
 
     def _plot_2d_panels(
         self,
@@ -1812,19 +1875,7 @@ class PhdfPlotGui(tk.Tk):
         comparing = self._comparison_active()
         rows, columns = self._panel_grid_shape(len(specs))
         self._last_panel_grid_shape = (rows, columns)
-        grid = self.figure.add_gridspec(
-            rows,
-            columns,
-            left=0.09,
-            # Leave a fixed outer gutter for the last colorbar's tick labels
-            # and rotated variable label. AxesDivider keeps this stable even
-            # when scientific-notation widths change between frames.
-            right=0.87,
-            bottom=0.07,
-            top=0.91,
-            hspace=0.16,
-            wspace=0.40,
-        )
+        grid = self.figure.add_gridspec(rows, columns)
         fast = self.fast_render_var.get()
         # Cell edges per run (all panels of one run share the same blocks).
         plane_edges = {}
@@ -1844,6 +1895,17 @@ class PhdfPlotGui(tk.Tk):
                 value = pick(float(pair[which[0]][which[1]]) for pair in all_edges)
             view.append(value)
         xlim, ylim = (view[0], view[1]), (view[2], view[3])
+        # Data aspect (height / width) of every panel; they all share limits.
+        aspect = (
+            abs(ylim[1] - ylim[0]) / max(abs(xlim[1] - xlim[0]), 1e-300)
+            if self.equal_aspect_var.get()
+            else None
+        )
+        # Colorbar size relative to the panel width, so tall/narrow panels
+        # still get a reasonably sized bar.
+        shape_ratio = float(np.clip(aspect if aspect else rows / columns, 0.4, 4.0))
+        colorbar_width = 0.05 * shape_ratio
+        colorbar_pad = 0.035 * shape_ratio
 
         axes = []
         self.mesh_lines = []
@@ -1859,21 +1921,9 @@ class PhdfPlotGui(tk.Tk):
             )
             axes.append(axes_object)
             panel_blocks = spec["blocks"]
-            dump = spec["dump"]
-            # When the color scale is locked, every panel (not just the
-            # primary one) respects the fixed vmin/vmax typed into the entry
-            # boxes, so frame-to-frame comparisons stay valid.
-            if spec["main"] or self.lock_colorscale_var.get():
-                requested_vmin = optional_float(self.vmin_var.get())
-                requested_vmax = optional_float(self.vmax_var.get())
-            else:
-                requested_vmin = None
-                requested_vmax = None
             # The norm is built from both runs' data for this variable, so run
             # A and run B panels of a pair always share an identical scale.
-            norm, _, _ = self._color_norm(
-                spec["group_blocks"], positive, requested_vmin, requested_vmax
-            )
+            norm = self._color_norm(spec, positive)
             edges = plane_edges[spec["run"]]
             for block, (data, (xedges, yedges)) in enumerate(zip(panel_blocks, edges)):
                 expected_shape = (len(yedges) - 1, len(xedges) - 1)
@@ -1883,7 +1933,8 @@ class PhdfPlotGui(tk.Tk):
                         f"does not match coordinate shape {expected_shape}"
                     )
             if fast:
-                pcol = self._draw_raster(axes_object, panel_blocks, edges, norm, xlim, ylim)
+                # Placeholder now; the raster is built once, after the layout.
+                pcol = self._draw_raster(axes_object, panel_blocks, edges, norm, xlim, ylim, defer=True)
             else:
                 pcol = None
                 for data, (xedges, yedges) in zip(panel_blocks, edges):
@@ -1917,36 +1968,38 @@ class PhdfPlotGui(tk.Tk):
 
             if pcol is None:
                 pcol = mpl.cm.ScalarMappable(norm=norm, cmap=self.cmap_var.get())
-            divider = make_axes_locatable(axes_object)
-            colorbar_axes = divider.append_axes("right", size="4%", pad="3%")
-            colorbar = self.figure.colorbar(pcol, cax=colorbar_axes)
-            colorbar.set_label(spec["variable"])
-            self.colorbars.append(colorbar)
-            if comparing:
-                axes_object.set_title(spec["tag"])
+            # When comparing, the A/B pair shares one scale, so only the run-B
+            # panel carries the (single) colorbar for that row.
+            if not comparing or spec["run"] == 1:
+                # Attached in axes coordinates, so it follows the panel exactly.
+                colorbar_axes = axes_object.inset_axes(
+                    [1.0 + colorbar_pad, 0.0, colorbar_width, 1.0]
+                )
+                colorbar = self.figure.colorbar(pcol, cax=colorbar_axes)
+                colorbar.set_label(spec["variable"])
+                colorbar.ax.minorticks_off()
+                self.colorbars.append(colorbar)
+            if comparing and row == 0:
+                axes_object.set_title(self._run_header(spec["run"]))
             if column == 0:
                 axes_object.set_ylabel(self._axis_labels()[1])
             else:
                 axes_object.tick_params(labelleft=False)
             axes_object.set_aspect("equal" if self.equal_aspect_var.get() else "auto")
-            if row < rows - 1:
-                axes_object.tick_params(labelbottom=False)
 
         self.colorbar = self.colorbars[0]
         self.line_panel_axes = axes
         self.main_axes = axes[0]
         axes[0].set_xlim(*xlim)
         axes[0].set_ylim(*ylim)
+        self._label_bottom_edges(axes, columns, self._axis_labels()[0])
+        self._finish_figure(title, rows, columns, aspect=aspect)
         if fast:
+            # Rasters were built before the final layout; size them to it.
+            self._rerender_rasters(draw=False)
             # Rebuild the rasters for the new view after toolbar zoom/pan.
             axes[0].callbacks.connect("xlim_changed", self._view_changed)
             axes[0].callbacks.connect("ylim_changed", self._view_changed)
-        for panel_index, axes_object in enumerate(axes):
-            row, _ = divmod(panel_index, columns)
-            if row == rows - 1:
-                axes_object.set_xlabel(self._axis_labels()[0])
-        self.figure_title = self.figure.suptitle(title, y=0.985)
-        self._apply_plot_style(draw=False)
         self.canvas.draw_idle()
         self.status_var.set(
             f"{len(specs)} 2-D panel{'s' if len(specs) != 1 else ''}  |  "
@@ -1962,8 +2015,12 @@ class PhdfPlotGui(tk.Tk):
             int(np.clip(bbox.height * scale + 1, 16, MAX_RASTER_PIXELS)),
         )
 
-    def _draw_raster(self, axes_object, blocks, edges, norm, xlim, ylim):
-        result = rasterize_blocks(blocks, edges, xlim, ylim, self._raster_shape(axes_object))
+    def _draw_raster(self, axes_object, blocks, edges, norm, xlim, ylim, defer=False):
+        result = (
+            None
+            if defer
+            else rasterize_blocks(blocks, edges, xlim, ylim, self._raster_shape(axes_object))
+        )
         if result is None:
             image_data, extent = np.full((1, 1), np.nan), (*xlim, *ylim)
         else:
@@ -1977,7 +2034,7 @@ class PhdfPlotGui(tk.Tk):
             cmap=self.cmap_var.get(),
             aspect="auto",
         )
-        image.set_visible(result is not None)
+        image.set_visible(result is not None and not defer)
         self._raster_panels.append(
             {"axes": axes_object, "image": image, "blocks": blocks, "edges": edges}
         )
@@ -2015,41 +2072,259 @@ class PhdfPlotGui(tk.Tk):
         return self.dump_path.name
 
     def _make_title(self) -> str:
-        def one(dump, path: Path | None) -> str:
-            text = path.name if path else "PHDF"
-            time = getattr(dump, "Time", None)
+        """Figure title. When comparing, each column header carries its run."""
+        lines = []
+        if not self._comparison_active():
+            text = self.dump_path.name if self.dump_path else "PHDF"
+            time = getattr(self.dump, "Time", None)
             if time is not None:
                 text += f"    t = {float(time):.3e} s"
-            return text
-
-        if self._comparison_active():
-            return (
-                f"A: {one(self.dump, self.dump_path)}\n"
-                f"B: {one(self.dump2, self.dump2_path)}"
+            lines.append(text)
+        if self._plot_dimension() == 3:
+            plane = self.slice_plane_var.get()
+            normal = AXIS_NAMES[SLICE_PLANES[plane][2]]
+            lines.append(
+                f"{plane} slice at {normal} = {float(self.slice_pos_var.get()):.4g}"
             )
-        return one(self.dump, self.dump_path)
+        return "\n".join(lines)
+
+    def _run_header(self, run: int) -> str:
+        """Column header for run A/B: directory, then dump time."""
+        dump, path = (self.dump, self.dump_path) if run == 0 else (self.dump2, self.dump2_path)
+        header = f"{RUN_LABELS[run]}: {path.parent.name}"
+        time = getattr(dump, "Time", None)
+        if time is not None:
+            header += f"\nt = {float(time):.3e} s"
+            if run == 1 and self.sync_time_var.get():
+                last = max(
+                    (t for t in (self._time_of(p) for p in self.dump2_paths) if t is not None),
+                    default=None,
+                )
+                if last is not None and float(getattr(self.dump, "Time", 0.0)) > last:
+                    header += " (end of run)"
+        return header
+
+    @staticmethod
+    def _label_bottom_edges(axes: list, columns: int, xlabel: str) -> None:
+        """x tick labels and label only on panels with no panel below them."""
+        count = len(axes)
+        for index, axes_object in enumerate(axes):
+            if index + columns < count:
+                axes_object.tick_params(labelbottom=False)
+                axes_object.set_xlabel("")
+            else:
+                axes_object.tick_params(labelbottom=True)
+                axes_object.set_xlabel(xlabel)
+
+    def _finish_figure(self, title: str, rows: int, columns: int, aspect) -> None:
+        """Title, styling, and the measured layout shared by 1-D and 2-D plots."""
+        self.figure_title = (
+            self.figure.suptitle(title, y=1.0, va="top") if title else None
+        )
+        self._layout_aspect = aspect
+        self._apply_plot_style(draw=False)
+        self._layout_figure()
+
+    def _fit_colorbar_labels(self, renderer, font_size: float) -> None:
+        """Keep each rotated colorbar label within the length of its bar."""
+        for colorbar in self.colorbars:
+            label = colorbar.ax.yaxis.label
+            full_text = label.get_text()
+            bar_height = colorbar.ax.get_window_extent(renderer).height
+            for _ in range(10):
+                if label.get_window_extent(renderer).height <= bar_height:
+                    break
+                if label.get_fontsize() > 0.7 * font_size:
+                    label.set_fontsize(label.get_fontsize() * 0.9)
+                elif label.get_text() == full_text and full_text.count(".") > 1:
+                    # e.g. "c.c.bulk.temperature" -> "bulk.temperature"
+                    label.set_text(".".join(full_text.split(".")[-2:]))
+                elif label.get_fontsize() > 0.5 * font_size:
+                    label.set_fontsize(label.get_fontsize() * 0.9)
+                else:
+                    break
+
+    @staticmethod
+    def _thin_ticks(axes_list: list, renderer, font_size: float) -> None:
+        """Use fewer ticks wherever neighboring tick labels would touch."""
+        min_gap = 0.5 * font_size * renderer.points_to_pixels(1.0)
+        targets = []
+        for axes_object in axes_list:
+            targets += [(axes_object.xaxis, 0), (axes_object.yaxis, 1)]
+            for child in axes_object.child_axes:  # colorbars
+                targets.append((child.yaxis, 1))
+        for axis, along in targets:
+            for _ in range(4):
+                try:
+                    ticks = axis._update_ticks()
+                except Exception:
+                    break
+                boxes = [
+                    tick.label1.get_window_extent(renderer)
+                    for tick in ticks
+                    if tick.label1.get_visible() and tick.label1.get_text()
+                ]
+                if len(boxes) < 3:
+                    break
+                if along == 0:
+                    spans = sorted((b.x0, b.x1) for b in boxes)
+                else:
+                    spans = sorted((b.y0, b.y1) for b in boxes)
+                gap = min(nxt[0] - prev[1] for prev, nxt in zip(spans, spans[1:]))
+                if gap >= min_gap:
+                    break
+                count = max(2, len(boxes) - 2)
+                if axis.get_scale() == "log":
+                    axis.set_major_locator(mticker.LogLocator(numticks=count + 1))
+                else:
+                    axis.set_major_locator(
+                        mticker.MaxNLocator(
+                            nbins=count, steps=[1, 2, 2.5, 4, 5, 10], min_n_ticks=1
+                        )
+                    )
+
+    def _layout_figure(self) -> None:
+        """Place panels on a uniform grid with gutters measured from their text.
+
+        Each panel's decorations (tick labels, axis labels, titles, colorbar and
+        offset text) are measured, column/row gutters are sized to the largest
+        of them, panels get one common size that honors the data aspect, and
+        the grid is centered. Gutters only grow while the panel structure stays
+        the same, so stepping through dumps never makes the panels jitter.
+        """
+        axes_list = getattr(self, "line_panel_axes", None) or []
+        axes_list = [a for a in axes_list if a in self.figure.axes]
+        rows, columns = self._last_panel_grid_shape or (1, 1)
+        if not axes_list:
+            return
+        figure = self.figure
+        renderer = figure.canvas.get_renderer()
+        dpi = figure.dpi
+        width_in, height_in = figure.get_size_inches()
+        font_size, _ = self._style_metrics()
+        pad = 0.35 * font_size / 72.0  # breathing room around the figure (inches)
+        gap = 0.8 * font_size / 72.0  # space between neighboring panels' text
+        aspect = getattr(self, "_layout_aspect", None)
+
+        structure = (
+            rows,
+            columns,
+            len(axes_list),
+            round(width_in, 3),
+            round(height_in, 3),
+            round(font_size, 2),
+            aspect is not None and round(aspect, 6),
+            self.log_var.get(),
+            self.figure_title.get_text().count("\n") if self.figure_title else -1,
+        )
+
+        title_height = 0.0
+        if self.figure_title is not None:
+            # Shrink an over-long title instead of letting it run off the canvas.
+            for _ in range(6):
+                extent = self.figure_title.get_window_extent(renderer)
+                if extent.width / dpi <= width_in - 2 * pad:
+                    break
+                self.figure_title.set_fontsize(self.figure_title.get_fontsize() * 0.9)
+            title_height = extent.height / dpi + pad
+
+        def measure() -> tuple[list, list, list, list]:
+            left = [0.0] * columns
+            right = [0.0] * columns
+            top = [0.0] * rows
+            bottom = [0.0] * rows
+            for index, axes_object in enumerate(axes_list):
+                row, column = divmod(index, columns)
+                box = axes_object.get_window_extent(renderer)
+                tight = axes_object.get_tightbbox(renderer)
+                left[column] = max(left[column], (box.x0 - tight.x0) / dpi)
+                right[column] = max(right[column], (tight.x1 - box.x1) / dpi)
+                top[row] = max(top[row], (tight.y1 - box.y1) / dpi)
+                bottom[row] = max(bottom[row], (box.y0 - tight.y0) / dpi)
+            return left, right, top, bottom
+
+        def place(left, right, top, bottom) -> None:
+            avail_w = width_in - 2 * pad - sum(left) - sum(right) - gap * (columns - 1)
+            avail_h = (
+                height_in - 2 * pad - title_height - sum(top) - sum(bottom)
+                - 0.5 * gap * (rows - 1)
+            )
+            panel_w = max(avail_w / columns, 0.3)
+            panel_h = max(avail_h / rows, 0.3)
+            if aspect is not None:
+                if panel_h / panel_w > aspect:
+                    panel_h = panel_w * aspect
+                else:
+                    panel_w = panel_h / aspect
+            used_w = sum(left) + sum(right) + columns * panel_w + gap * (columns - 1)
+            used_h = sum(top) + sum(bottom) + rows * panel_h + 0.5 * gap * (rows - 1)
+            x_start = pad + max(width_in - 2 * pad - used_w, 0.0) / 2.0
+            y_start = height_in - pad - title_height - max(
+                height_in - 2 * pad - title_height - used_h, 0.0
+            ) / 2.0
+            x_edges = []
+            x = x_start
+            for column in range(columns):
+                x += left[column]
+                x_edges.append(x)
+                x += panel_w + right[column] + gap
+            y_tops = []
+            y = y_start
+            for row in range(rows):
+                y -= top[row]
+                y_tops.append(y)
+                y -= panel_h + bottom[row] + 0.5 * gap
+            for index, axes_object in enumerate(axes_list):
+                row, column = divmod(index, columns)
+                axes_object.set_position(
+                    [
+                        x_edges[column] / width_in,
+                        (y_tops[row] - panel_h) / height_in,
+                        panel_w / width_in,
+                        panel_h / height_in,
+                    ]
+                )
+
+        remembered = (
+            self._layout_memory[1]
+            if self._layout_memory is not None and self._layout_memory[0] == structure
+            else None
+        )
+        # Start from the remembered layout (playback: same structure) or from
+        # a first measurement, so the panels are at (nearly) their final size.
+        place(*(remembered or measure()))
+        self._fit_colorbar_labels(renderer, font_size)
+        self._thin_ticks(axes_list, renderer, font_size)
+        gutters = measure()  # tick counts depend on panel size: measure again
+        if remembered is not None:
+            gutters = tuple(
+                [max(a, b) for a, b in zip(new, old)]
+                for new, old in zip(gutters, remembered)
+            )
+        self._layout_memory = (structure, gutters)
+        place(*gutters)
+        # Final panel heights may differ slightly: make sure labels still fit.
+        self._fit_colorbar_labels(renderer, font_size)
 
     def plot(self) -> None:
         try:
             if self.dump is None:
                 return
-            _, line_width = self._style_metrics()
             if self.field_data is None:
                 self.load_variable()
             blocks = self._selected_blocks()
             is_1d = self._plot_dimension() == 1
             positive = self.log_var.get()
 
-            self.figure.clear()
+            line_width = self._style_metrics(
+                self._panel_grid_shape(self._panel_count())
+            )[1]
+            with warnings.catch_warnings():
+                # Clearing shared log axes briefly resets them to (0, 1).
+                warnings.simplefilter("ignore", UserWarning)
+                self.figure.clear()
             self.figure_title = None
             title = self._make_title()
-            if self._plot_dimension() == 3:
-                plane = self.slice_plane_var.get()
-                normal = AXIS_NAMES[SLICE_PLANES[plane][2]]
-                title += (
-                    f"\n{plane} slice at {normal} = "
-                    f"{float(self.slice_pos_var.get()):.4g}"
-                )
             if is_1d:
                 self._plot_1d_panels(blocks, positive, line_width, title)
             else:
