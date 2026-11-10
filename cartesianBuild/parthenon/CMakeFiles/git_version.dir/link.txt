@@ -1,2 +1,0 @@
-/usr/bin/ar qc libgit_version.a CMakeFiles/git_version.dir/__/generated/provenance.cpp.o
-/usr/bin/ranlib libgit_version.a

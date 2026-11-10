@@ -1,2 +1,0 @@
-/usr/bin/ar qc libkokkoskernels.a CMakeFiles/kokkoskernels.dir/common/src/dummy.cpp.o CMakeFiles/kokkoskernels.dir/common/src/KokkosKernels_EagerInitialize.cpp.o CMakeFiles/kokkoskernels.dir/sparse/tpls/KokkosKernels_tpl_handles.cpp.o
-/usr/bin/ranlib libkokkoskernels.a
